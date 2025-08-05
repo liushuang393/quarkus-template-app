@@ -72,6 +72,107 @@ open http://localhost:8080
 | `user1`    | `password` | USER   | 基本機能のみ   |
 | `sales1`   | `password` | SALES  | 営業機能       |
 
+## 📋 新規プロジェクト作成（テンプレート複製）
+
+このテンプレートを使用して新しいプロジェクトを作成する方法です。
+
+### 🛠️ プロジェクト作成スクリプト
+
+本テンプレートには、新規プロジェクト作成用のスクリプトが用意されています：
+
+#### Windows環境
+```cmd
+# 日本語環境用
+create-project-jp.bat my-new-project
+
+# 英語環境用
+create-project-en.bat my-new-project
+```
+
+#### Linux/Mac環境
+```bash
+# 基本的な使用方法
+./create-project.sh my-new-project
+
+# カスタマイズオプション付き
+./create-project.sh my-new-project \
+  --group-id com.mycompany \
+  --package com.mycompany.myproject \
+  --description "My awesome project"
+```
+
+### 📝 スクリプトの機能
+
+これらのスクリプトは以下の作業を自動化します：
+
+1. **プロジェクト構造の複製** - 必要なディレクトリとファイルをコピー
+2. **設定ファイルの更新** - `pom.xml`、`application.yaml`等のプロジェクト固有情報を置換
+3. **パッケージ名の変更** - Javaクラスのパッケージ宣言を新しい名前に更新
+4. **README.mdの生成** - 新プロジェクト用のドキュメントを作成
+5. **Gitリポジトリの初期化** - 新しいGitリポジトリとして初期化
+
+### 🎯 作成されるプロジェクト
+
+スクリプト実行後、以下の構造で新しいプロジェクトが作成されます：
+
+```
+my-new-project/
+├── src/
+│   ├── main/
+│   │   ├── java/com/mycompany/myproject/
+│   │   └── resources/
+│   └── test/
+├── docs/
+├── docker/
+├── scripts/
+├── pom.xml          # プロジェクト情報が更新済み
+├── README.md        # 新プロジェクト用に生成
+└── .gitignore
+```
+
+### ⚙️ カスタマイズオプション
+
+| オプション | 説明 | デフォルト値 |
+|-----------|------|-------------|
+| `--group-id` | MavenグループID | `com.example` |
+| `--package` | Javaパッケージ名 | `com.example` |
+| `--version` | プロジェクトバージョン | `1.0.0-SNAPSHOT` |
+| `--description` | プロジェクト説明 | 自動生成 |
+
+### 🚀 作成後の手順
+
+```bash
+# 1. 新しいプロジェクトディレクトリに移動
+cd my-new-project
+
+# 2. 依存関係のダウンロードとビルド
+./mvnw clean compile
+
+# 3. 開発モードで起動
+./mvnw quarkus:dev
+
+# 4. ブラウザでアクセス
+open http://localhost:8080
+```
+
+### 💡 使用例
+
+```bash
+# シンプルな作成
+./create-project.sh blog-system
+
+# 企業プロジェクト用にカスタマイズ
+./create-project.sh employee-management \
+  --group-id com.acme.hr \
+  --package com.acme.hr.employee \
+  --description "Employee Management System"
+
+# 個人プロジェクト用
+./create-project.sh my-portfolio \
+  --group-id io.github.myusername \
+  --package io.github.myusername.portfolio
+```
+
 ## 🏗️ アーキテクチャ
 
 ```mermaid
