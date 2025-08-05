@@ -133,6 +133,7 @@ pre-commit install
 
 ```bash
 # 開発モードで起動（ホットリロード有効）
+./mvnw clean package -Dnative
 ./mvnw quarkus:dev
 
 # 別ターミナルでテスト実行
