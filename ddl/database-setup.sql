@@ -11,7 +11,7 @@
 
 -- データベース作成（PostgreSQL管理者権限で実行）
 -- CREATE DATABASE quarkus_auth
---     WITH 
+--     WITH
 --     OWNER = postgres
 --     ENCODING = 'UTF8'
 --     LC_COLLATE = 'ja_JP.UTF-8'
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    
+
     -- インデックス
     CONSTRAINT users_username_unique UNIQUE (username),
     CONSTRAINT users_email_check CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
@@ -57,10 +57,10 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     status VARCHAR(20) NOT NULL DEFAULT 'SUCCESS',
     error_message TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- 外部キー制約
     CONSTRAINT fk_audit_logs_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
-    
+
     -- チェック制約
     CONSTRAINT audit_logs_status_check CHECK (status IN ('SUCCESS', 'FAILURE', 'ERROR'))
 );
@@ -91,31 +91,31 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_request_id ON audit_logs(request_id);
 
 -- 管理者ユーザー作成
 -- パスワード: AdminPass123 (BCryptハッシュ化済み)
-INSERT INTO users (username, password, email, role, is_active) VALUES 
+INSERT INTO users (username, password, email, role, is_active) VALUES
 ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'admin@example.com', 'ADMIN', true)
 ON CONFLICT (username) DO NOTHING;
 
 -- 営業ユーザー作成
 -- パスワード: SalesPass123 (BCryptハッシュ化済み)
-INSERT INTO users (username, password, email, role, is_active) VALUES 
+INSERT INTO users (username, password, email, role, is_active) VALUES
 ('sales', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'sales@example.com', 'SALES', true)
 ON CONFLICT (username) DO NOTHING;
 
 -- 一般ユーザー作成
 -- パスワード: UserPass123 (BCryptハッシュ化済み)
-INSERT INTO users (username, password, email, role, is_active) VALUES 
+INSERT INTO users (username, password, email, role, is_active) VALUES
 ('user', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'user@example.com', 'USER', true)
 ON CONFLICT (username) DO NOTHING;
 
 -- テストユーザー作成（開発・テスト用）
 -- パスワード: Password123 (BCryptハッシュ化済み)
-INSERT INTO users (username, password, email, role, is_active) VALUES 
+INSERT INTO users (username, password, email, role, is_active) VALUES
 ('testuser', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'test@example.com', 'USER', true)
 ON CONFLICT (username) DO NOTHING;
 
 -- デモユーザー作成（画面テスト用）
 -- パスワード: DemoPass123 (BCryptハッシュ化済み)
-INSERT INTO users (username, password, email, role, is_active) VALUES 
+INSERT INTO users (username, password, email, role, is_active) VALUES
 ('demouser', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'demo@example.com', 'USER', true)
 ON CONFLICT (username) DO NOTHING;
 
@@ -124,11 +124,11 @@ ON CONFLICT (username) DO NOTHING;
 -- =====================================================
 
 -- システム初期化ログ
-INSERT INTO audit_logs (user_id, username, action, resource_type, details, status) VALUES 
+INSERT INTO audit_logs (user_id, username, action, resource_type, details, status) VALUES
 (1, 'admin', 'SYSTEM_INIT', 'SYSTEM', 'システム初期化完了', 'SUCCESS');
 
 -- ユーザー作成ログ
-INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, details, status) VALUES 
+INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, details, status) VALUES
 (1, 'admin', 'USER_CREATE', 'USER', '1', '管理者ユーザー作成', 'SUCCESS'),
 (1, 'admin', 'USER_CREATE', 'USER', '2', '営業ユーザー作成', 'SUCCESS'),
 (1, 'admin', 'USER_CREATE', 'USER', '3', '一般ユーザー作成', 'SUCCESS'),
@@ -193,16 +193,16 @@ INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, d
 -- =====================================================
 
 -- テーブルサイズ確認
--- SELECT 
+-- SELECT
 --     schemaname,
 --     tablename,
 --     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
--- FROM pg_tables 
+-- FROM pg_tables
 -- WHERE schemaname = 'public'
 -- ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
 -- インデックス使用状況確認
--- SELECT 
+-- SELECT
 --     schemaname,
 --     tablename,
 --     indexname,
@@ -216,10 +216,10 @@ INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, d
 -- 完了
 -- =====================================================
 -- データベースセットアップが完了しました。
--- 
+--
 -- 初期ユーザー:
 -- - admin/AdminPass123 (ADMIN)
--- - sales/SalesPass123 (SALES) 
+-- - sales/SalesPass123 (SALES)
 -- - user/UserPass123 (USER)
 -- - testuser/Password123 (USER) - テスト用
 -- - demouser/DemoPass123 (USER) - デモ用

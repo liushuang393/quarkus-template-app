@@ -22,7 +22,7 @@ report_issue() {
 # Function to check for problematic reflection patterns
 check_reflection_patterns() {
     local file="$1"
-    
+
     # Check for Class.forName without @RegisterForReflection
     if grep -n "Class\.forName" "$file" > /dev/null; then
         local line_num=$(grep -n "Class\.forName" "$file" | cut -d: -f1 | head -1)
@@ -31,7 +31,7 @@ check_reflection_patterns() {
             report_issue "$file" "$line_num" "Class.forName used without @RegisterForReflection annotation"
         fi
     fi
-    
+
     # Check for Method.invoke without proper configuration
     if grep -n "\.invoke(" "$file" > /dev/null; then
         local line_num=$(grep -n "\.invoke(" "$file" | cut -d: -f1 | head -1)
@@ -39,7 +39,7 @@ check_reflection_patterns() {
             report_issue "$file" "$line_num" "Method.invoke used without reflection configuration"
         fi
     fi
-    
+
     # Check for Constructor.newInstance
     if grep -n "Constructor.*newInstance" "$file" > /dev/null; then
         local line_num=$(grep -n "Constructor.*newInstance" "$file" | cut -d: -f1 | head -1)
@@ -52,7 +52,7 @@ check_reflection_patterns() {
 # Function to check for problematic dynamic proxy usage
 check_dynamic_proxy() {
     local file="$1"
-    
+
     if grep -n "Proxy\.newProxyInstance" "$file" > /dev/null; then
         local line_num=$(grep -n "Proxy\.newProxyInstance" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "Dynamic proxy usage detected - may not work in native mode"
@@ -62,7 +62,7 @@ check_dynamic_proxy() {
 # Function to check for problematic classloader usage
 check_classloader_usage() {
     local file="$1"
-    
+
     if grep -n "URLClassLoader\|getContextClassLoader" "$file" > /dev/null; then
         local line_num=$(grep -n "URLClassLoader\|getContextClassLoader" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "Dynamic classloading detected - may not work in native mode"
@@ -72,7 +72,7 @@ check_classloader_usage() {
 # Function to check for unsupported JNI usage
 check_jni_usage() {
     local file="$1"
-    
+
     if grep -n "System\.loadLibrary\|System\.load" "$file" > /dev/null; then
         local line_num=$(grep -n "System\.loadLibrary\|System\.load" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "JNI library loading detected - verify GraalVM compatibility"
@@ -82,7 +82,7 @@ check_jni_usage() {
 # Function to check for problematic serialization
 check_serialization() {
     local file="$1"
-    
+
     if grep -n "ObjectInputStream\|ObjectOutputStream" "$file" > /dev/null; then
         local line_num=$(grep -n "ObjectInputStream\|ObjectOutputStream" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "Java serialization detected - consider using JSON/Jackson instead"
@@ -92,7 +92,7 @@ check_serialization() {
 # Function to check for missing native annotations
 check_native_annotations() {
     local file="$1"
-    
+
     # Check if file uses reflection but lacks proper annotations
     if grep -q "getDeclaredMethod\|getDeclaredField\|getDeclaredConstructor" "$file"; then
         if ! grep -q "@RegisterForReflection\|@ReflectiveAccess" "$file"; then
@@ -105,13 +105,13 @@ check_native_annotations() {
 # Main checking function
 check_file() {
     local file="$1"
-    
+
     if [[ ! -f "$file" ]]; then
         return
     fi
-    
+
     echo "  Checking: $file"
-    
+
     check_reflection_patterns "$file"
     check_dynamic_proxy "$file"
     check_classloader_usage "$file"

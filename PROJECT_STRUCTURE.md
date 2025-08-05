@@ -26,7 +26,7 @@ quarkus-template-app/
 ```
 src/main/java/com/example/
 ├── 🔐 AuthResource.java            # 認証API
-├── 🏠 MenuResource.java            # メニューAPI  
+├── 🏠 MenuResource.java            # メニューAPI
 ├── 🎯 PageController.java          # ページ表示コントローラー
 ├── 📁 dto/                         # データ転送オブジェクト
 │   ├── LoginRequest.java

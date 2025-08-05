@@ -26,12 +26,12 @@ if [ $# -eq 0 ]; then
     echo "デフォルトパス: $TARGET_PATH"
     echo ""
     read -p "このパスでよろしいですか？ (Y/N または新しいパスを入力): " USER_INPUT
-    
+
     if [ "$USER_INPUT" = "N" ] || [ "$USER_INPUT" = "n" ]; then
         echo "処理を中止しました。"
         exit 0
     fi
-    
+
     if [ "$USER_INPUT" != "Y" ] && [ "$USER_INPUT" != "y" ] && [ -n "$USER_INPUT" ]; then
         TARGET_PATH="$USER_INPUT"
     fi

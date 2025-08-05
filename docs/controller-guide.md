@@ -50,13 +50,13 @@ public class UserController {
 
     @Inject
     UserService userService;
-    
+
     @Inject
     MessageService messageService;
-    
+
     @Context
     HttpHeaders headers;
-    
+
     // メソッド実装...
 }
 ```
@@ -90,7 +90,7 @@ public Response getUsers() {
 @Operation(summary = "ユーザー詳細取得")
 public Response getUser(@PathParam("id") Long id) {
     Optional<User> user = userService.findById(id);
-    
+
     if (user.isPresent()) {
         return Response.ok(user.get()).build();
     } else {
@@ -112,10 +112,10 @@ public Response searchUsers(
     @QueryParam("role") String role,
     @QueryParam("page") @DefaultValue("0") int page,
     @QueryParam("size") @DefaultValue("10") int size) {
-    
+
     SearchCriteria criteria = new SearchCriteria(username, role, page, size);
     PagedResult<User> result = userService.search(criteria);
-    
+
     return Response.ok(result).build();
 }
 ```
@@ -133,14 +133,14 @@ public Response searchUsers(
 public Response createUser(@Valid CreateUserRequest request) {
     try {
         User user = userService.create(request, headers);
-        
+
         return Response.status(201)
             .entity(Map.of(
                 "message", messageService.getMessage("user.created.success", headers),
                 "userId", user.getId()
             ))
             .build();
-            
+
     } catch (BusinessException e) {
         return Response.status(400)
             .entity(Map.of("error", e.getMessage()))
@@ -158,15 +158,15 @@ public Response createUser(@Valid CreateUserRequest request) {
 public Response uploadProfileImage(
     @FormParam("file") InputStream fileInputStream,
     @FormParam("file") FormDataContentDisposition fileDetail) {
-    
+
     try {
         String fileName = fileService.saveFile(fileInputStream, fileDetail);
-        
+
         return Response.ok(Map.of(
             "message", "ファイルアップロード成功",
             "fileName", fileName
         )).build();
-        
+
     } catch (Exception e) {
         return Response.status(500)
             .entity(Map.of("error", "ファイルアップロードに失敗しました"))
@@ -187,15 +187,15 @@ public Response uploadProfileImage(
 public Response updateUser(
     @PathParam("id") Long id,
     @Valid UpdateUserRequest request) {
-    
+
     try {
         User updatedUser = userService.update(id, request, headers);
-        
+
         return Response.ok(Map.of(
             "message", messageService.getMessage("user.updated.success", headers),
             "user", updatedUser
         )).build();
-        
+
     } catch (BusinessException e) {
         return Response.status(400)
             .entity(Map.of("error", e.getMessage()))
@@ -220,11 +220,11 @@ public Response updateUser(
 public Response deleteUser(@PathParam("id") Long id) {
     try {
         userService.delete(id);
-        
+
         return Response.ok(Map.of(
             "message", messageService.getMessage("user.deleted.success", headers)
         )).build();
-        
+
     } catch (NotFoundException e) {
         return Response.status(404)
             .entity(Map.of("error", e.getMessage()))
@@ -241,11 +241,11 @@ public Response deleteUser(@PathParam("id") Long id) {
 public Response deactivateUser(@PathParam("id") Long id) {
     try {
         userService.deactivate(id);
-        
+
         return Response.ok(Map.of(
             "message", messageService.getMessage("user.deactivated.success", headers)
         )).build();
-        
+
     } catch (NotFoundException e) {
         return Response.status(404)
             .entity(Map.of("error", e.getMessage()))
@@ -265,7 +265,7 @@ public class SecureController {
 
     @Context
     SecurityContext securityContext;
-    
+
     @GET
     @Path("/profile")
     @RolesAllowed("USER")
@@ -273,7 +273,7 @@ public class SecureController {
         String username = securityContext.getUserPrincipal().getName();
         // 実装...
     }
-    
+
     @GET
     @Path("/admin")
     @RolesAllowed("ADMIN")
@@ -306,22 +306,22 @@ public class PublicController {
 ```java
 // DTOクラス
 public class CreateUserRequest {
-    
+
     @NotBlank(message = "ユーザー名は必須です")
     @Size(min = 3, max = 50, message = "ユーザー名は3文字以上50文字以下です")
     @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "ユーザー名は英数字とアンダースコアのみ使用可能です")
     public String username;
-    
+
     @NotBlank(message = "パスワードは必須です")
     @Size(min = 8, max = 100, message = "パスワードは8文字以上100文字以下です")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", 
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
              message = "パスワードは大文字、小文字、数字を含む必要があります")
     public String password;
-    
+
     @NotBlank(message = "メールアドレスは必須です")
     @Email(message = "有効なメールアドレスを入力してください")
     public String email;
-    
+
     @NotNull(message = "ロールは必須です")
     public User.Role role;
 }
@@ -350,10 +350,10 @@ public @interface UniqueUsername {
 // バリデーター実装
 @ApplicationScoped
 public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String> {
-    
+
     @Inject
     UserService userService;
-    
+
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
         return username == null || !userService.existsByUsername(username);
@@ -407,44 +407,44 @@ public class UserController {
 ```java
 @Provider
 public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
-    
+
     @Inject
     MessageService messageService;
-    
+
     @Context
     HttpHeaders headers;
-    
+
     @Override
     public Response toResponse(Exception exception) {
-        
+
         // バリデーション例外
         if (exception instanceof ConstraintViolationException) {
             return handleValidationException((ConstraintViolationException) exception);
         }
-        
+
         // ビジネス例外
         if (exception instanceof BusinessException) {
             return handleBusinessException((BusinessException) exception);
         }
-        
+
         // その他の例外
         LOG.error("予期しないエラー", exception);
         String message = messageService.getMessage("error.internal.server.error", headers);
-        
+
         return Response.status(500)
             .entity(new ErrorResponse("INTERNAL_SERVER_ERROR", message))
             .build();
     }
-    
+
     private Response handleValidationException(ConstraintViolationException e) {
         List<FieldError> fieldErrors = e.getConstraintViolations()
             .stream()
             .map(this::toFieldError)
             .collect(Collectors.toList());
-            
+
         String message = messageService.getMessage("error.validation.error", headers);
         ErrorResponse errorResponse = new ErrorResponse("VALIDATION_ERROR", message, fieldErrors);
-        
+
         return Response.status(400).entity(errorResponse).build();
     }
 }
@@ -467,7 +467,7 @@ class UserControllerTest {
             .body("id", equalTo(1))
             .body("username", notNullValue());
     }
-    
+
     @Test
     void testCreateUser() {
         CreateUserRequest request = new CreateUserRequest();
@@ -475,7 +475,7 @@ class UserControllerTest {
         request.password = "TestPass123";
         request.email = "test@example.com";
         request.role = User.Role.USER;
-        
+
         given()
             .contentType(ContentType.JSON)
             .body(request)
@@ -485,7 +485,7 @@ class UserControllerTest {
             .body("message", notNullValue())
             .body("userId", notNullValue());
     }
-    
+
     @Test
     void testGetUserNotFound() {
         given()

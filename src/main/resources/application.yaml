@@ -30,33 +30,33 @@ smallrye:
 # Quarkus configuration
 quarkus:
   profile: dev
-  
+
   # HTTP configuration
   http:
     port: 8080
-    
+
   # Security configuration
   security:
     jaxrs:
       deny-unannotated-endpoints: false
-      
+
   # OpenAPI configuration
   swagger-ui:
     always-include: true
     path: /q/swagger-ui
-    
+
   # Metrics configuration
   micrometer:
     enabled: true
     export:
       prometheus:
         enabled: true
-        
+
   # Health check configuration
   smallrye-health:
     ui:
       enable: true
-      
+
   # Internationalization
   locales: ja,en,zh
   default-locale: ja

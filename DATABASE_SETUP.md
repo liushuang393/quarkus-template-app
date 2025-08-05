@@ -70,7 +70,7 @@ sudo -u postgres psql
 
 # データベース作成
 CREATE DATABASE quarkus_auth
-    WITH 
+    WITH
     OWNER = postgres
     ENCODING = 'UTF8'
     LC_COLLATE = 'ja_JP.UTF-8'
@@ -235,11 +235,11 @@ UPDATE users SET password = '$2a$10$NEW_HASH_HERE' WHERE username = 'admin';
 
 ```sql
 -- テーブルサイズ確認
-SELECT 
+SELECT
     schemaname,
     tablename,
     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables 
+FROM pg_tables
 WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 

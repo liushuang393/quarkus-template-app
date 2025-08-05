@@ -25,12 +25,12 @@ if "%~1"=="" (
     echo Default path: !TARGET_PATH!
     echo.
     set /p "USER_INPUT=Is this path OK? (Y/N or enter new path): "
-    
+
     if /i "!USER_INPUT!"=="N" (
         echo Process cancelled.
         goto :end
     )
-    
+
     if /i not "!USER_INPUT!"=="Y" (
         if not "!USER_INPUT!"=="" (
             set "TARGET_PATH=!USER_INPUT!"

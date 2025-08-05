@@ -22,7 +22,7 @@ report_issue() {
 # Function to check for dynamic class references
 check_dynamic_class_refs() {
     local file="$1"
-    
+
     # Check for dynamic class loading in templates
     if grep -n "class\.forName\|Class\.forName" "$file" > /dev/null; then
         local line_num=$(grep -n "class\.forName\|Class\.forName" "$file" | cut -d: -f1 | head -1)
@@ -33,13 +33,13 @@ check_dynamic_class_refs() {
 # Function to check for reflection usage in templates
 check_template_reflection() {
     local file="$1"
-    
+
     # Check for reflection method calls
     if grep -n "\.getClass()\." "$file" > /dev/null; then
         local line_num=$(grep -n "\.getClass()\." "$file" | cut -d: -f1 | head -1)
         echo "⚠️  $file:$line_num - getClass() usage detected - ensure target classes are registered for reflection"
     fi
-    
+
     # Check for method invocation patterns that might use reflection
     if grep -n "invoke\|call\|execute" "$file" > /dev/null; then
         local line_num=$(grep -n "invoke\|call\|execute" "$file" | cut -d: -f1 | head -1)
@@ -50,7 +50,7 @@ check_template_reflection() {
 # Function to validate Qute syntax
 check_qute_syntax() {
     local file="$1"
-    
+
     # Check for proper Qute expression syntax
     if grep -n "{[^}]*[^{]}" "$file" > /dev/null; then
         # Check for unclosed expressions
@@ -59,7 +59,7 @@ check_qute_syntax() {
             report_issue "$file" "?" "Potentially unclosed Qute expressions found"
         fi
     fi
-    
+
     # Check for nested expressions that might be problematic
     if grep -n "{{.*{{" "$file" > /dev/null; then
         local line_num=$(grep -n "{{.*{{" "$file" | cut -d: -f1 | head -1)
@@ -70,13 +70,13 @@ check_qute_syntax() {
 # Function to check for unsupported template features
 check_unsupported_features() {
     local file="$1"
-    
+
     # Check for JavaScript execution in templates
     if grep -n "<script.*eval\|<script.*Function" "$file" > /dev/null; then
         local line_num=$(grep -n "<script.*eval\|<script.*Function" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "Dynamic JavaScript execution detected - not supported in native mode"
     fi
-    
+
     # Check for server-side includes that might be problematic
     if grep -n "<!--#include\|{#include" "$file" > /dev/null; then
         local line_num=$(grep -n "<!--#include\|{#include" "$file" | cut -d: -f1 | head -1)
@@ -87,7 +87,7 @@ check_unsupported_features() {
 # Function to check for proper data binding
 check_data_binding() {
     local file="$1"
-    
+
     # Check for complex object navigation that might need reflection
     if grep -n "{[^}]*\.[^}]*\.[^}]*}" "$file" > /dev/null; then
         local line_num=$(grep -n "{[^}]*\.[^}]*\.[^}]*}" "$file" | cut -d: -f1 | head -1)
@@ -98,12 +98,12 @@ check_data_binding() {
 # Function to validate template structure
 check_template_structure() {
     local file="$1"
-    
+
     # Check for proper HTML structure (basic validation)
     if ! grep -q "<!DOCTYPE\|<html" "$file"; then
         echo "ℹ️  $file - No DOCTYPE or html tag found - consider adding for better compatibility"
     fi
-    
+
     # Check for Qute template inheritance
     if grep -n "{#extends\|{#include" "$file" > /dev/null; then
         echo "ℹ️  $file - Template inheritance/inclusion detected - ensure all referenced templates exist"
@@ -113,13 +113,13 @@ check_template_structure() {
 # Main checking function
 check_template() {
     local file="$1"
-    
+
     if [[ ! -f "$file" ]]; then
         return
     fi
-    
+
     echo "  Checking template: $file"
-    
+
     check_dynamic_class_refs "$file"
     check_template_reflection "$file"
     check_qute_syntax "$file"

@@ -182,13 +182,13 @@ body {
         margin: 1rem;
         padding: 1.5rem;
     }
-    
+
     .menu-header {
         flex-direction: column;
         gap: 1rem;
         text-align: center;
     }
-    
+
     .user-info {
         flex-direction: column;
         gap: 0.5rem;

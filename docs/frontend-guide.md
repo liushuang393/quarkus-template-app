@@ -40,7 +40,7 @@ src/main/resources/
 </head>
 <body>
     <!-- コンテンツ -->
-    
+
     <!-- jQuery CDN -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <!-- Bootstrap JS CDN -->
@@ -192,14 +192,14 @@ $(document).ready(function() {
     // 変数定義
     let currentToken = null;
     let currentUser = null;
-    
+
     // DOM要素の取得
     const $loginForm = $('#login-form');
     const $messageDiv = $('#message');
-    
+
     // イベントハンドラー
     $loginForm.on('submit', handleLogin);
-    
+
     // 初期化処理
     initializePage();
 });
@@ -284,18 +284,18 @@ function createMenuItem(menu) {
 // フォーム送信処理
 $('#login-form').on('submit', function(e) {
     e.preventDefault();
-    
+
     // バリデーション
     if (!validateForm()) {
         return;
     }
-    
+
     // データ収集
     const formData = {
         username: $('#username').val(),
         password: $('#password').val()
     };
-    
+
     // 送信
     submitLogin(formData);
 });
@@ -304,17 +304,17 @@ $('#login-form').on('submit', function(e) {
 function validateForm() {
     const username = $('#username').val().trim();
     const password = $('#password').val();
-    
+
     if (!username) {
         showMessage('ユーザー名を入力してください', 'warning');
         return false;
     }
-    
+
     if (password.length < 8) {
         showMessage('パスワードは8文字以上で入力してください', 'warning');
         return false;
     }
-    
+
     return true;
 }
 ```
@@ -372,7 +372,7 @@ $('#language-select').val(currentLang);
         margin: 1rem;
         padding: 1.5rem;
     }
-    
+
     .user-info {
         flex-direction: column;
         gap: 0.5rem;
@@ -415,7 +415,7 @@ window.addEventListener('unhandledrejection', function(e) {
 
 ```html
 <!-- レスポンシブ画像 -->
-<img src="image.jpg" 
+<img src="image.jpg"
      srcset="image-small.jpg 480w, image-medium.jpg 768w, image-large.jpg 1200w"
      sizes="(max-width: 480px) 100vw, (max-width: 768px) 50vw, 25vw"
      alt="説明">

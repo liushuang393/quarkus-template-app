@@ -41,7 +41,7 @@ package com.example.model;
 import java.time.LocalDateTime;
 
 public class User {
-    
+
     private Long id;
     private String username;
     private String password;
@@ -49,14 +49,14 @@ public class User {
     private Role role = Role.USER;
     private LocalDateTime createdAt = LocalDateTime.now();
     private boolean isActive = true;
-    
+
     public enum Role {
         ADMIN, USER, SALES
     }
-    
+
     // デフォルトコンストラクタ
     public User() {}
-    
+
     // 便利コンストラクタ
     public User(String username, String password, String email, Role role) {
         this.username = username;
@@ -64,16 +64,16 @@ public class User {
         this.email = email;
         this.role = role;
     }
-    
+
     // Getter/Setter
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    
+
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
-    
+
     // ... 他のgetter/setter
-    
+
     @Override
     public String toString() {
         return "User{" +
@@ -92,7 +92,7 @@ public class User {
 
 ```java
 public class AuditLog {
-    
+
     private Long id;
     private Long userId;
     private String username;
@@ -106,27 +106,27 @@ public class AuditLog {
     private Status status = Status.SUCCESS;
     private String errorMessage;
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
     public enum Status {
         SUCCESS, FAILURE, ERROR
     }
-    
+
     // コンストラクタ
     public AuditLog() {}
-    
+
     public AuditLog(Long userId, String username, String action) {
         this.userId = userId;
         this.username = username;
         this.action = action;
     }
-    
-    public AuditLog(Long userId, String username, String action, 
+
+    public AuditLog(Long userId, String username, String action,
                    String resourceType, String resourceId) {
         this(userId, username, action);
         this.resourceType = resourceType;
         this.resourceId = resourceId;
     }
-    
+
     // Getter/Setter...
 }
 ```
@@ -146,7 +146,7 @@ import java.util.Optional;
 
 @Mapper
 public interface UserMapper {
-    
+
     /**
      * ユーザーを挿入
      */
@@ -154,7 +154,7 @@ public interface UserMapper {
             "VALUES (#{username}, #{password}, #{email}, #{role}, #{createdAt}, #{active})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(User user);
-    
+
     /**
      * IDでユーザーを検索
      */
@@ -170,7 +170,7 @@ public interface UserMapper {
         @Result(property = "active", column = "is_active")
     })
     Optional<User> findById(Long id);
-    
+
     /**
      * ユーザー名でユーザーを検索
      */
@@ -186,7 +186,7 @@ public interface UserMapper {
         @Result(property = "active", column = "is_active")
     })
     Optional<User> findByUsername(String username);
-    
+
     /**
      * 全ユーザーを取得
      */
@@ -194,7 +194,7 @@ public interface UserMapper {
             "FROM users ORDER BY created_at DESC")
     @ResultMap("userResultMap")
     List<User> findAll();
-    
+
     /**
      * ユーザーを更新
      */
@@ -202,7 +202,7 @@ public interface UserMapper {
             "email = #{email}, role = #{role}, is_active = #{active} " +
             "WHERE id = #{id}")
     int update(User user);
-    
+
     /**
      * ユーザーを削除
      */
@@ -216,7 +216,7 @@ public interface UserMapper {
 ```java
 @Mapper
 public interface UserMapper {
-    
+
     /**
      * 条件付き検索
      */
@@ -252,7 +252,7 @@ public interface UserMapper {
                      @Param("sortDirection") String sortDirection,
                      @Param("size") int size,
                      @Param("offset") int offset);
-    
+
     /**
      * 検索結果件数取得
      */
@@ -272,7 +272,7 @@ public interface UserMapper {
                         @Param("isActive") Boolean isActive,
                         @Param("createdAfter") LocalDateTime createdAfter,
                         @Param("createdBefore") LocalDateTime createdBefore);
-    
+
     /**
      * バッチ挿入
      */
@@ -283,7 +283,7 @@ public interface UserMapper {
             "</foreach>" +
             "</script>")
     void insertBatch(@Param("users") List<User> users);
-    
+
     /**
      * 統計情報取得
      */
@@ -302,11 +302,11 @@ public interface UserMapper {
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.mapper.UserMapper">
-    
+
     <!-- 結果マッピング定義 -->
     <resultMap id="userResultMap" type="com.example.model.User">
         <id property="id" column="id"/>
@@ -317,16 +317,16 @@ public interface UserMapper {
         <result property="createdAt" column="created_at"/>
         <result property="active" column="is_active"/>
     </resultMap>
-    
+
     <!-- 共通SQL片 -->
     <sql id="userColumns">
         id, username, password, email, role, created_at, is_active
     </sql>
-    
+
     <sql id="userTable">
         users
     </sql>
-    
+
     <!-- 複雑な検索クエリ -->
     <select id="searchUsers" resultMap="userResultMap">
         SELECT <include refid="userColumns"/>
@@ -362,7 +362,7 @@ public interface UserMapper {
         <if test="criteria.sortDirection != 'ASC'">DESC</if>
         LIMIT #{criteria.size} OFFSET #{criteria.offset}
     </select>
-    
+
     <!-- 動的更新 -->
     <update id="updateSelective">
         UPDATE <include refid="userTable"/>
@@ -375,10 +375,10 @@ public interface UserMapper {
         </set>
         WHERE id = #{id}
     </update>
-    
+
     <!-- 複雑な集計クエリ -->
     <select id="getUserStatistics" resultType="map">
-        SELECT 
+        SELECT
             COUNT(*) as totalUsers,
             COUNT(CASE WHEN is_active = true THEN 1 END) as activeUsers,
             COUNT(CASE WHEN is_active = false THEN 1 END) as inactiveUsers,
@@ -408,7 +408,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
-    
+
     CONSTRAINT chk_role CHECK (role IN ('ADMIN', 'USER', 'SALES'))
 );
 
@@ -427,7 +427,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     status VARCHAR(20) DEFAULT 'SUCCESS',
     error_message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT chk_status CHECK (status IN ('SUCCESS', 'FAILURE', 'ERROR')),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
@@ -445,7 +445,7 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
 
 -- 初期データ投入
-INSERT INTO users (username, password, email, role) VALUES 
+INSERT INTO users (username, password, email, role) VALUES
 ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfFGjO6NaaJfbPpWO.1fFnKm', 'admin@example.com', 'ADMIN'),
 ('user1', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfFGjO6NaaJfbPpWO.1fFnKm', 'user1@example.com', 'USER'),
 ('sales1', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iYqiSfFGjO6NaaJfbPpWO.1fFnKm', 'sales1@example.com', 'SALES');
@@ -466,7 +466,7 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,
-    
+
     CONSTRAINT chk_role CHECK (role IN ('ADMIN', 'USER', 'SALES'))
 );
 
@@ -479,9 +479,9 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-CREATE TRIGGER update_users_updated_at 
-    BEFORE UPDATE ON users 
-    FOR EACH ROW 
+CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
 -- 監査ログテーブル
@@ -499,7 +499,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     status VARCHAR(20) DEFAULT 'SUCCESS',
     error_message TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    
+
     CONSTRAINT chk_status CHECK (status IN ('SUCCESS', 'FAILURE', 'ERROR'))
 );
 
@@ -547,10 +547,10 @@ quarkus:
 @QuarkusTest
 @TestTransaction
 class UserMapperTest {
-    
+
     @Inject
     UserMapper userMapper;
-    
+
     @Test
     void testInsertAndFindById() {
         // Given
@@ -559,34 +559,34 @@ class UserMapperTest {
         user.setPassword("hashedpassword");
         user.setEmail("test@example.com");
         user.setRole(User.Role.USER);
-        
+
         // When
         userMapper.insert(user);
-        
+
         // Then
         assertNotNull(user.getId());
-        
+
         Optional<User> found = userMapper.findById(user.getId());
         assertTrue(found.isPresent());
         assertEquals("testuser", found.get().getUsername());
     }
-    
+
     @Test
     void testSearch() {
         // Given
         insertTestUsers();
-        
+
         // When
         List<User> results = userMapper.search(
-            "test", null, User.Role.USER, true, 
+            "test", null, User.Role.USER, true,
             null, null, "username", "ASC", 10, 0
         );
-        
+
         // Then
         assertFalse(results.isEmpty());
         assertTrue(results.stream().allMatch(u -> u.getUsername().contains("test")));
     }
-    
+
     private void insertTestUsers() {
         for (int i = 1; i <= 5; i++) {
             User user = new User();

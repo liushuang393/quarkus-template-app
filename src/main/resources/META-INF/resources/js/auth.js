@@ -26,12 +26,12 @@ $(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
     const currentLang = urlParams.get('lang') || 'ja';
     $languageSelect.val(currentLang);
-    
+
     // フォーム切り替え
     $toggleLink.on('click', function(e) {
         e.preventDefault();
         const isLoginVisible = !$loginForm.hasClass('d-none');
-        
+
         if (isLoginVisible) {
             $loginForm.addClass('d-none');
             $registerForm.removeClass('d-none');
@@ -43,7 +43,7 @@ $(document).ready(function() {
         }
         hideMessage();
     });
-    
+
     // メッセージ表示
     function showMessage(text, type) {
         $messageDiv
@@ -51,22 +51,22 @@ $(document).ready(function() {
             .addClass('alert-' + type)
             .text(text);
     }
-    
+
     function hideMessage() {
         $messageDiv.addClass('d-none');
     }
-    
+
     // 登録処理
     $registerForm.on('submit', function(e) {
         e.preventDefault();
-        
+
         const data = {
             username: $('#register-username').val(),
             email: $('#register-email').val(),
             password: $('#register-password').val(),
             role: $('#register-role').val()
         };
-        
+
         $.ajax({
             type: 'POST',
             url: '/auth/register',
@@ -87,16 +87,16 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     // ログイン処理
     $loginForm.on('submit', function(e) {
         e.preventDefault();
-        
+
         const data = {
             username: $('#login-username').val(),
             password: $('#login-password').val()
         };
-        
+
         $.ajax({
             type: 'POST',
             url: '/auth/login',
@@ -113,7 +113,7 @@ $(document).ready(function() {
             }
         });
     });
-    
+
     // メニュー表示
     function showMenu() {
         $.ajax({
@@ -126,11 +126,11 @@ $(document).ready(function() {
                 // ユーザー情報表示
                 $('#user-name').text(currentUser.username);
                 $('#user-role').text(currentUser.role);
-                
+
                 // メニュー項目表示
                 const $menuItems = $('#menu-items');
                 $menuItems.empty();
-                
+
                 response.menus.forEach(function(menu) {
                     const $menuItem = $('<a>')
                         .attr('href', '#')
@@ -142,7 +142,7 @@ $(document).ready(function() {
                         });
                     $menuItems.append($menuItem);
                 });
-                
+
                 // 画面切り替え
                 $authContainer.addClass('d-none');
                 $menuContainer.removeClass('d-none');
@@ -152,25 +152,25 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     // ログアウト処理
     $('#logout-btn').on('click', function() {
         currentToken = null;
         currentUser = null;
-        
+
         // フォームリセット
         $loginForm[0].reset();
         $registerForm[0].reset();
-        
+
         // 画面切り替え
         $menuContainer.addClass('d-none');
         $authContainer.removeClass('d-none');
-        
+
         // ログインフォームに戻す
         $registerForm.addClass('d-none');
         $loginForm.removeClass('d-none');
         $toggleLink.text('新規登録はこちら');
-        
+
         hideMessage();
     });
 });

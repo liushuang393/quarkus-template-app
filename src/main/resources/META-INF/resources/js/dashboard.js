@@ -4,40 +4,40 @@
 $(document).ready(function() {
     let currentUser = null;
     let currentToken = localStorage.getItem('authToken');
-    
+
     // 初期化
     init();
-    
+
     function init() {
         // 認証チェック
         if (!currentToken) {
             redirectToLogin();
             return;
         }
-        
+
         // ユーザー情報取得
         loadUserInfo();
-        
+
         // メニュー読み込み
         loadMenu();
-        
+
         // ダッシュボードデータ読み込み
         loadDashboardData();
-        
+
         // イベントハンドラー設定
         setupEventHandlers();
-        
+
         // 言語設定
         setupLanguage();
     }
-    
+
     function setupEventHandlers() {
         // ログアウト
         $('#logout-btn').on('click', function(e) {
             e.preventDefault();
             logout();
         });
-        
+
         // サイドバーメニュー
         $('#sidebar-menu').on('click', '.nav-link', function(e) {
             e.preventDefault();
@@ -47,51 +47,51 @@ $(document).ready(function() {
                 updateActiveMenu($(this));
             }
         });
-        
+
         // リフレッシュボタン
         $('#refresh-btn').on('click', function() {
             loadDashboardData();
         });
-        
+
         // クイックアクション
         $('#add-user-btn').on('click', function() {
             showAddUserModal();
         });
-        
+
         $('#view-reports-btn').on('click', function() {
             showSection('reports');
         });
-        
+
         $('#system-settings-btn').on('click', function() {
             showSection('settings');
         });
-        
+
         // 言語切り替え
         $('#language-select').on('change', function() {
             const selectedLang = $(this).val();
             changeLanguage(selectedLang);
         });
     }
-    
+
     function setupLanguage() {
         const urlParams = new URLSearchParams(window.location.search);
         const currentLang = urlParams.get('lang') || getDefaultLanguage();
         $('#language-select').val(currentLang);
     }
-    
+
     function getDefaultLanguage() {
         const browserLang = navigator.language || navigator.userLanguage;
         if (browserLang.startsWith('ja')) return 'ja';
         if (browserLang.startsWith('zh')) return 'zh';
         return 'en';
     }
-    
+
     function changeLanguage(lang) {
         const currentUrl = new URL(window.location);
         currentUrl.searchParams.set('lang', lang);
         window.location.href = currentUrl.toString();
     }
-    
+
     function loadUserInfo() {
         $.ajax({
             url: '/api/users/profile',
@@ -109,7 +109,7 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function loadMenu() {
         $.ajax({
             url: '/menu',
@@ -125,13 +125,13 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function renderMenu(menus) {
         const $menu = $('#sidebar-menu');
-        
+
         // 既存の動的メニューを削除（ダッシュボードは残す）
         $menu.find('.nav-item:not(:first)').remove();
-        
+
         menus.forEach(function(menu) {
             const menuItem = $(`
                 <li class="nav-item">
@@ -144,7 +144,7 @@ $(document).ready(function() {
             $menu.append(menuItem);
         });
     }
-    
+
     function getMenuSection(menuName) {
         const sectionMap = {
             'ユーザー管理': 'user-management',
@@ -162,7 +162,7 @@ $(document).ready(function() {
         };
         return sectionMap[menuName] || 'dashboard';
     }
-    
+
     function getMenuIcon(menuName) {
         const iconMap = {
             'ユーザー管理': 'bi bi-people',
@@ -180,10 +180,10 @@ $(document).ready(function() {
         };
         return iconMap[menuName] || 'bi bi-circle';
     }
-    
+
     function loadDashboardData() {
         showLoading();
-        
+
         // 統計データ読み込み
         $.ajax({
             url: '/api/dashboard/stats',
@@ -198,7 +198,7 @@ $(document).ready(function() {
                 showAlert('統計データの読み込みに失敗しました', 'warning');
             }
         });
-        
+
         // 最近のアクティビティ読み込み
         $.ajax({
             url: '/api/dashboard/activity',
@@ -217,23 +217,23 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function updateStatistics(stats) {
         $('#total-users').text(stats.totalUsers || 0);
         $('#active-users').text(stats.activeUsers || 0);
         $('#today-logins').text(stats.todayLogins || 0);
-        
+
         // システムステータス更新
-        const statusBadge = stats.systemStatus === 'online' ? 
+        const statusBadge = stats.systemStatus === 'online' ?
             '<span class="badge bg-success">オンライン</span>' :
             '<span class="badge bg-danger">オフライン</span>';
         $('#system-status').html(statusBadge);
     }
-    
+
     function updateActivityTable(activities) {
         const $tbody = $('#activity-table tbody');
         $tbody.empty();
-        
+
         if (activities && activities.length > 0) {
             activities.forEach(function(activity) {
                 const statusBadge = getStatusBadge(activity.status);
@@ -251,7 +251,7 @@ $(document).ready(function() {
             $tbody.append('<tr><td colspan="4" class="text-center">データがありません</td></tr>');
         }
     }
-    
+
     function getStatusBadge(status) {
         switch (status) {
             case 'SUCCESS':
@@ -264,7 +264,7 @@ $(document).ready(function() {
                 return '<span class="badge bg-secondary">不明</span>';
         }
     }
-    
+
     function formatDateTime(dateTime) {
         const date = new Date(dateTime);
         return date.toLocaleString('ja-JP', {
@@ -275,21 +275,21 @@ $(document).ready(function() {
             minute: '2-digit'
         });
     }
-    
+
     function showSection(sectionName) {
         // 全セクションを非表示
         $('.content-section').addClass('d-none');
-        
+
         // 指定セクションを表示
         $(`#${sectionName}-section`).removeClass('d-none').addClass('fade-in');
-        
+
         // パンくずリスト更新
         updateBreadcrumb(sectionName);
-        
+
         // セクション固有のデータ読み込み
         loadSectionData(sectionName);
     }
-    
+
     function updateBreadcrumb(sectionName) {
         const sectionNames = {
             'dashboard': 'ダッシュボード',
@@ -298,15 +298,15 @@ $(document).ready(function() {
             'sales': '売上管理',
             'reports': 'レポート'
         };
-        
+
         $('#current-page').text(sectionNames[sectionName] || sectionName);
     }
-    
+
     function updateActiveMenu($activeLink) {
         $('#sidebar-menu .nav-link').removeClass('active');
         $activeLink.addClass('active');
     }
-    
+
     function loadSectionData(sectionName) {
         switch (sectionName) {
             case 'user-management':
@@ -318,22 +318,22 @@ $(document).ready(function() {
             // 他のセクションも同様に実装
         }
     }
-    
+
     function loadUserManagement() {
         // ユーザー管理画面のデータ読み込み
         // 実装は省略
     }
-    
+
     function loadSettings() {
         // 設定画面のデータ読み込み
         // 実装は省略
     }
-    
+
     function showAddUserModal() {
         // ユーザー追加モーダルを表示
         // 実装は省略
     }
-    
+
     function updateUIForRole(role) {
         // ロールに応じてUIを調整
         if (role !== 'ADMIN') {
@@ -341,7 +341,7 @@ $(document).ready(function() {
             $('#system-settings-btn').hide();
         }
     }
-    
+
     function logout() {
         $.ajax({
             url: '/auth/logout',
@@ -355,19 +355,19 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function redirectToLogin() {
         window.location.href = '/login';
     }
-    
+
     function showLoading() {
         $('#loading-spinner').removeClass('d-none');
     }
-    
+
     function hideLoading() {
         $('#loading-spinner').addClass('d-none');
     }
-    
+
     function showAlert(message, type) {
         const alertHtml = `
             <div class="alert alert-${type} alert-dismissible fade show" role="alert">
@@ -376,7 +376,7 @@ $(document).ready(function() {
             </div>
         `;
         $('#alert-container').append(alertHtml);
-        
+
         // 5秒後に自動削除
         setTimeout(function() {
             $('#alert-container .alert:first').alert('close');

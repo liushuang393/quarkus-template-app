@@ -253,15 +253,15 @@ import java.util.ResourceBundle;
  */
 @ApplicationScoped
 public class MessageService {
-    
+
     private static final Logger LOG = Logger.getLogger(MessageService.class);
-    
+
     private static final String BUNDLE_NAME = "messages";
     private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    
+
     /**
      * メッセージキーに対応するローカライズされたメッセージを取得
-     * 
+     *
      * @param key メッセージキー
      * @param locale ロケール
      * @return ローカライズされたメッセージ
@@ -282,20 +282,20 @@ public class MessageService {
             }
         }
     }
-    
+
     /**
      * メッセージキーに対応するローカライズされたメッセージを取得（デフォルトロケール使用）
-     * 
+     *
      * @param key メッセージキー
      * @return ローカライズされたメッセージ
      */
     public String getMessage(String key) {
         return getMessage(key, DEFAULT_LOCALE);
     }
-    
+
     /**
      * Accept-Languageヘッダーからロケールを解析
-     * 
+     *
      * @param acceptLanguage Accept-Languageヘッダーの値
      * @return 解析されたロケール
      */
@@ -303,7 +303,7 @@ public class MessageService {
         if (acceptLanguage == null || acceptLanguage.trim().isEmpty()) {
             return DEFAULT_LOCALE;
         }
-        
+
         // Accept-Languageヘッダーの最初の言語を使用
         String[] languages = acceptLanguage.split(",");
         if (languages.length > 0) {
@@ -312,7 +312,7 @@ public class MessageService {
             if (primaryLanguage.contains(";")) {
                 primaryLanguage = primaryLanguage.split(";")[0].trim();
             }
-            
+
             // サポートされている言語かチェック
             switch (primaryLanguage.toLowerCase()) {
                 case "ja":
@@ -329,13 +329,13 @@ public class MessageService {
                     return Locale.ENGLISH;
             }
         }
-        
+
         return DEFAULT_LOCALE;
     }
-    
+
     /**
      * HttpHeadersからロケールを取得してメッセージを返す
-     * 
+     *
      * @param key メッセージキー
      * @param headers HTTPヘッダー
      * @return ローカライズされたメッセージ
@@ -348,10 +348,10 @@ public class MessageService {
         }
         return getMessage(key);
     }
-    
+
     /**
      * パラメータ付きメッセージの取得
-     * 
+     *
      * @param key メッセージキー
      * @param locale ロケール
      * @param params パラメータ
@@ -364,10 +364,10 @@ public class MessageService {
         }
         return message;
     }
-    
+
     /**
      * 利用可能な言語一覧を取得
-     * 
+     *
      * @return サポートされている言語のリスト
      */
     public List<LanguageInfo> getSupportedLanguages() {
@@ -377,7 +377,7 @@ public class MessageService {
             new LanguageInfo("zh", "中文", "Chinese")
         );
     }
-    
+
     /**
      * 言語情報クラス
      */
@@ -385,13 +385,13 @@ public class MessageService {
         private final String code;
         private final String nativeName;
         private final String englishName;
-        
+
         public LanguageInfo(String code, String nativeName, String englishName) {
             this.code = code;
             this.nativeName = nativeName;
             this.englishName = englishName;
         }
-        
+
         // Getter methods...
         public String getCode() { return code; }
         public String getNativeName() { return nativeName; }
@@ -425,14 +425,14 @@ public class MessageService {
             <option value="zh">中文</option>
         </select>
     </div>
-    
+
     <!-- ログイン・登録フォーム -->
     <div id="auth-container" class="auth-container">
         <div class="auth-header">
             <h1>{messages.header}</h1>
             <p>{messages.description}</p>
         </div>
-        
+
         <!-- ログインフォーム -->
         <form id="login-form" class="auth-form">
             <div class="mb-3">
@@ -445,13 +445,13 @@ public class MessageService {
             </div>
             <button type="submit" class="btn btn-primary w-100 mb-3">{messages.loginButton}</button>
         </form>
-        
+
         <!-- フォーム切り替えリンク -->
         <div class="text-center">
             <a href="#" id="toggle-form" class="toggle-link">{messages.loginToggle}</a>
         </div>
     </div>
-    
+
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/js/auth.js"></script>
@@ -470,12 +470,12 @@ $(document).ready(function() {
         currentUrl.searchParams.set('lang', selectedLang);
         window.location.href = currentUrl.toString();
     });
-    
+
     // URLパラメータから現在の言語を取得して選択状態を設定
     const urlParams = new URLSearchParams(window.location.search);
     const currentLang = urlParams.get('lang') || getDefaultLanguage();
     $('#language-select').val(currentLang);
-    
+
     // ブラウザの言語設定から推測
     function getDefaultLanguage() {
         const browserLang = navigator.language || navigator.userLanguage;
@@ -483,7 +483,7 @@ $(document).ready(function() {
         if (browserLang.startsWith('zh')) return 'zh';
         return 'en';
     }
-    
+
     // 動的メッセージ更新（AJAX経由）
     function updateMessages(lang) {
         $.ajax({
@@ -497,7 +497,7 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     function updateUIMessages(messages) {
         // 動的にメッセージを更新
         $('[data-message-key]').each(function() {
@@ -518,16 +518,16 @@ $(document).ready(function() {
 @Path("/")
 @Produces(MediaType.TEXT_HTML)
 public class PageController {
-    
+
     @Inject
     Template login;
-    
+
     @Inject
     MessageService messageService;
-    
+
     @Context
     HttpHeaders headers;
-    
+
     /**
      * ログインページを表示
      * @param lang 言語パラメータ（オプション）
@@ -539,7 +539,7 @@ public class PageController {
         Locale locale = getLocale(lang);
         return login.data("messages", getMessages(locale));
     }
-    
+
     /**
      * 言語パラメータまたはAccept-Languageヘッダーからロケールを取得
      */
@@ -549,7 +549,7 @@ public class PageController {
         }
         return messageService.parseLocale(headers.getHeaderString("Accept-Language"));
     }
-    
+
     /**
      * テンプレート用のメッセージマップを作成
      */
@@ -574,13 +574,13 @@ public class PageController {
 @Path("/api/messages")
 @Produces(MediaType.APPLICATION_JSON)
 public class MessageController {
-    
+
     @Inject
     MessageService messageService;
-    
+
     @Context
     HttpHeaders headers;
-    
+
     /**
      * 現在の言語のメッセージ一覧を取得
      */
@@ -589,11 +589,11 @@ public class MessageController {
         Locale locale = messageService.parseLocale(
             headers.getHeaderString("Accept-Language")
         );
-        
+
         Map<String, String> messages = getAllMessages(locale);
         return Response.ok(messages).build();
     }
-    
+
     /**
      * 指定言語のメッセージ一覧を取得
      */
@@ -604,7 +604,7 @@ public class MessageController {
         Map<String, String> messages = getAllMessages(locale);
         return Response.ok(messages).build();
     }
-    
+
     /**
      * サポートされている言語一覧を取得
      */
@@ -614,7 +614,7 @@ public class MessageController {
         List<MessageService.LanguageInfo> languages = messageService.getSupportedLanguages();
         return Response.ok(languages).build();
     }
-    
+
     private Map<String, String> getAllMessages(Locale locale) {
         // 必要なメッセージキーを定義
         String[] messageKeys = {
@@ -624,12 +624,12 @@ public class MessageController {
             "error.authentication.failed", "error.validation.error",
             // ... 他のキー
         };
-        
+
         Map<String, String> messages = new HashMap<>();
         for (String key : messageKeys) {
             messages.put(key, messageService.getMessage(key, locale));
         }
-        
+
         return messages;
     }
 }
@@ -642,40 +642,40 @@ public class MessageController {
 ```java
 @QuarkusTest
 class MessageServiceTest {
-    
+
     @Inject
     MessageService messageService;
-    
+
     @Test
     void testGetMessageEnglish() {
         String message = messageService.getMessage("auth.login.title", Locale.ENGLISH);
         assertEquals("Login - Quarkus Authentication System", message);
     }
-    
+
     @Test
     void testGetMessageJapanese() {
         String message = messageService.getMessage("auth.login.title", Locale.JAPANESE);
         assertEquals("ログイン - Quarkus認証システム", message);
     }
-    
+
     @Test
     void testGetMessageChinese() {
         String message = messageService.getMessage("auth.login.title", Locale.CHINESE);
         assertEquals("登录 - Quarkus认证系统", message);
     }
-    
+
     @Test
     void testParseLocaleFromAcceptLanguage() {
         Locale locale = messageService.parseLocale("ja-JP,ja;q=0.9,en;q=0.8");
         assertEquals(Locale.JAPANESE, locale);
     }
-    
+
     @Test
     void testFallbackToDefaultLocale() {
         String message = messageService.getMessage("nonexistent.key", Locale.JAPANESE);
         assertEquals("nonexistent.key", message); // キー自体が返される
     }
-    
+
     @Test
     void testParameterizedMessage() {
         // メッセージファイルに "user.welcome=Welcome, {0}!" を追加

@@ -25,12 +25,12 @@ if "%~1"=="" (
     echo デフォルトパス: !TARGET_PATH!
     echo.
     set /p "USER_INPUT=このパスでよろしいですか？ (Y/N または新しいパスを入力): "
-    
+
     if /i "!USER_INPUT!"=="N" (
         echo 処理を中止しました。
         goto :end
     )
-    
+
     if /i not "!USER_INPUT!"=="Y" (
         if not "!USER_INPUT!"=="" (
             set "TARGET_PATH=!USER_INPUT!"

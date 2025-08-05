@@ -5,7 +5,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=flat-square&logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-> 🚀 **企業レベルの認証・権限管理システムテンプレート**  
+> 🚀 **企業レベルの認証・権限管理システムテンプレート**
 > JWT認証、ロールベースアクセス制御、国際化対応、MyBatis統合
 
 ## ✨ 主要機能
@@ -277,7 +277,7 @@ git push origin main
 <details>
 <summary>データベース接続エラー</summary>
 
-開発環境（H2）: アプリケーション再起動  
+開発環境（H2）: アプリケーション再起動
 本番環境（PostgreSQL）: `application-prod.yaml`の接続設定を確認
 </details>
 
@@ -340,5 +340,3 @@ ls src/main/resources/META-INF/resources/*.pem
 [⭐ Star this repo](https://github.com/liushuang393/quarkus-template-app) • [🐛 Report Bug](https://github.com/liushuang393/quarkus-template-app/issues) • [✨ Request Feature](https://github.com/liushuang393/quarkus-template-app/issues)
 
 </div>
-
-

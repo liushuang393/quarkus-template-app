@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     status VARCHAR(20) NOT NULL DEFAULT 'SUCCESS',
     error_message CLOB,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
+
     -- 外部キー制約
     CONSTRAINT fk_audit_logs_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
@@ -66,32 +66,32 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_request_id ON audit_logs(request_id);
 
 -- 管理者ユーザー作成
 -- パスワード: AdminPass123 (BCryptハッシュ化済み)
-MERGE INTO users (username, password, email, role, is_active) 
-KEY(username) VALUES 
+MERGE INTO users (username, password, email, role, is_active)
+KEY(username) VALUES
 ('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'admin@example.com', 'ADMIN', true);
 
 -- 営業ユーザー作成
 -- パスワード: SalesPass123 (BCryptハッシュ化済み)
-MERGE INTO users (username, password, email, role, is_active) 
-KEY(username) VALUES 
+MERGE INTO users (username, password, email, role, is_active)
+KEY(username) VALUES
 ('sales', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'sales@example.com', 'SALES', true);
 
 -- 一般ユーザー作成
 -- パスワード: UserPass123 (BCryptハッシュ化済み)
-MERGE INTO users (username, password, email, role, is_active) 
-KEY(username) VALUES 
+MERGE INTO users (username, password, email, role, is_active)
+KEY(username) VALUES
 ('user', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'user@example.com', 'USER', true);
 
 -- テストユーザー作成（開発・テスト用）
 -- パスワード: Password123 (BCryptハッシュ化済み)
-MERGE INTO users (username, password, email, role, is_active) 
-KEY(username) VALUES 
+MERGE INTO users (username, password, email, role, is_active)
+KEY(username) VALUES
 ('testuser', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'test@example.com', 'USER', true);
 
 -- デモユーザー作成（画面テスト用）
 -- パスワード: DemoPass123 (BCryptハッシュ化済み)
-MERGE INTO users (username, password, email, role, is_active) 
-KEY(username) VALUES 
+MERGE INTO users (username, password, email, role, is_active)
+KEY(username) VALUES
 ('demouser', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'demo@example.com', 'USER', true);
 
 -- =====================================================
@@ -99,11 +99,11 @@ KEY(username) VALUES
 -- =====================================================
 
 -- システム初期化ログ
-INSERT INTO audit_logs (user_id, username, action, resource_type, details, status) VALUES 
+INSERT INTO audit_logs (user_id, username, action, resource_type, details, status) VALUES
 (1, 'admin', 'SYSTEM_INIT', 'SYSTEM', 'システム初期化完了', 'SUCCESS');
 
 -- ユーザー作成ログ
-INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, details, status) VALUES 
+INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, details, status) VALUES
 (1, 'admin', 'USER_CREATE', 'USER', '1', '管理者ユーザー作成', 'SUCCESS'),
 (1, 'admin', 'USER_CREATE', 'USER', '2', '営業ユーザー作成', 'SUCCESS'),
 (1, 'admin', 'USER_CREATE', 'USER', '3', '一般ユーザー作成', 'SUCCESS'),
@@ -126,16 +126,16 @@ INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, d
 -- =====================================================
 -- 6. H2コンソール接続情報
 -- =====================================================
--- 
+--
 -- 開発モード時のH2コンソールアクセス:
 -- URL: http://localhost:8080/h2-console
--- 
+--
 -- 接続設定:
 -- - Driver Class: org.h2.Driver
 -- - JDBC URL: jdbc:h2:mem:testdb
 -- - User Name: sa
 -- - Password: (空白)
--- 
+--
 -- =====================================================
 
 -- =====================================================
@@ -150,11 +150,11 @@ INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, d
 -- DELETE FROM users WHERE username NOT IN ('admin', 'sales', 'user');
 
 -- 監査ログ統計
--- SELECT 
+-- SELECT
 --     action,
 --     status,
 --     COUNT(*) as count
--- FROM audit_logs 
+-- FROM audit_logs
 -- GROUP BY action, status
 -- ORDER BY count DESC;
 
@@ -162,13 +162,13 @@ INSERT INTO audit_logs (user_id, username, action, resource_type, resource_id, d
 -- 完了
 -- =====================================================
 -- H2データベースセットアップが完了しました。
--- 
+--
 -- 初期ユーザー:
 -- - admin/AdminPass123 (ADMIN)
--- - sales/SalesPass123 (SALES) 
+-- - sales/SalesPass123 (SALES)
 -- - user/UserPass123 (USER)
 -- - testuser/Password123 (USER) - テスト用
 -- - demouser/DemoPass123 (USER) - デモ用
--- 
+--
 -- H2コンソール: http://localhost:8080/h2-console
 -- =====================================================

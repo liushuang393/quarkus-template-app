@@ -26,7 +26,7 @@ check_reflection_config_exists() {
         "src/main/resources/META-INF/native-image/reflection-config.json"
         "src/main/resources/reflection-config.json"
     )
-    
+
     local config_found=false
     for config_file in "${config_files[@]}"; do
         if [[ -f "$config_file" ]]; then
@@ -35,14 +35,14 @@ check_reflection_config_exists() {
             break
         fi
     done
-    
+
     return 0  # Don't fail if no config file exists, as Quarkus handles most cases
 }
 
 # Function to check for reflection usage patterns
 check_reflection_usage() {
     local file="$1"
-    
+
     # Patterns that require reflection configuration
     local reflection_patterns=(
         "Class\.forName"
@@ -58,12 +58,12 @@ check_reflection_usage() {
         "Field\.get"
         "Constructor\.newInstance"
     )
-    
+
     for pattern in "${reflection_patterns[@]}"; do
         if grep -n "$pattern" "$file" > /dev/null; then
             local line_num=$(grep -n "$pattern" "$file" | cut -d: -f1 | head -1)
             local class_name=$(basename "$file" .java)
-            
+
             # Check if the class has @RegisterForReflection annotation
             if grep -q "@RegisterForReflection" "$file"; then
                 echo "✅ $file:$line_num - $pattern usage with @RegisterForReflection annotation"
@@ -82,7 +82,7 @@ check_reflection_usage() {
 # Function to check for annotation-based reflection
 check_annotation_reflection() {
     local file="$1"
-    
+
     # Check for annotations that might use reflection
     local annotation_patterns=(
         "@JsonProperty"
@@ -95,7 +95,7 @@ check_annotation_reflection() {
         "@ManyToMany"
         "@OneToOne"
     )
-    
+
     for pattern in "${annotation_patterns[@]}"; do
         if grep -n "$pattern" "$file" > /dev/null; then
             local line_num=$(grep -n "$pattern" "$file" | cut -d: -f1 | head -1)
@@ -107,11 +107,11 @@ check_annotation_reflection() {
 # Function to check for proper @RegisterForReflection usage
 check_register_for_reflection() {
     local file="$1"
-    
+
     if grep -n "@RegisterForReflection" "$file" > /dev/null; then
         local line_num=$(grep -n "@RegisterForReflection" "$file" | cut -d: -f1 | head -1)
         echo "✅ $file:$line_num - @RegisterForReflection annotation found"
-        
+
         # Check if it specifies targets properly
         if grep -A 5 "@RegisterForReflection" "$file" | grep -q "targets\|value"; then
             echo "✅ $file - @RegisterForReflection with explicit targets"
@@ -122,13 +122,13 @@ check_register_for_reflection() {
 # Function to check for problematic reflection patterns
 check_problematic_patterns() {
     local file="$1"
-    
+
     # Check for dynamic class name construction
     if grep -n "Class\.forName.*+\|Class\.forName.*concat" "$file" > /dev/null; then
         local line_num=$(grep -n "Class\.forName.*+\|Class\.forName.*concat" "$file" | cut -d: -f1 | head -1)
         report_issue "$file" "$line_num" "Dynamic class name construction detected - may not work in native mode"
     fi
-    
+
     # Check for reflection on generic types
     if grep -n "getGenericType\|getParameterizedType" "$file" > /dev/null; then
         local line_num=$(grep -n "getGenericType\|getParameterizedType" "$file" | cut -d: -f1 | head -1)
@@ -139,13 +139,13 @@ check_problematic_patterns() {
 # Main checking function
 check_file() {
     local file="$1"
-    
+
     if [[ ! -f "$file" ]]; then
         return
     fi
-    
+
     echo "  Checking: $file"
-    
+
     check_reflection_usage "$file"
     check_annotation_reflection "$file"
     check_register_for_reflection "$file"
