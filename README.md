@@ -133,8 +133,13 @@ pre-commit install
 
 ```bash
 # 開発モードで起動（ホットリロード有効）
-./mvnw clean package -Dnative
 ./mvnw quarkus:dev
+
+# JVMモードでビルド（開発環境）
+./mvnw clean package -Pdev
+
+# ネイティブビルド（開発環境）
+./mvnw clean package -Pdev -Dnative
 
 # 別ターミナルでテスト実行
 ./mvnw test
@@ -149,6 +154,9 @@ pre-commit install
 # 全体的な品質チェック（pre-commitフック）
 pre-commit run --all-files
 
+# 特定のフックのみ実行
+pre-commit run quarkus-native-compatibility
+
 # 個別チェック実行
 ./scripts/check-native-compatibility.sh src/main/java/com/example/*.java
 ./scripts/check-dependencies.sh
@@ -158,11 +166,17 @@ pre-commit run --all-files
 #### 4. ビルド・パッケージング
 
 ```bash
-# JVMモードビルド
-./mvnw clean package
+# 開発環境用ビルド（H2データベース）
+./mvnw clean package -Pdev
 
-# ネイティブビルド（GraalVM）
-./mvnw clean package -Dnative
+# 本番環境用ビルド（PostgreSQL）
+./mvnw clean package -Pprod
+
+# ネイティブビルド（開発環境）
+./mvnw clean package -Pdev -Dnative
+
+# ネイティブビルド（本番環境）
+./mvnw clean package -Pprod -Dnative
 
 # ネイティブビルドテスト
 ./target/quarkus-template-app-1.0.0-SNAPSHOT-runner

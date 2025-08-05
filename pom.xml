@@ -141,6 +141,7 @@
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -166,7 +167,7 @@
     </build>
 
     <profiles>
-        <!-- 开发环境 (默认) -->
+        <!-- 開発環境 (デフォルト) -->
         <profile>
             <id>dev</id>
             <activation>
@@ -183,7 +184,7 @@
             </properties>
         </profile>
 
-        <!-- 生产环境 -->
+        <!-- 本番環境 -->
         <profile>
             <id>prod</id>
             <dependencies>
@@ -194,20 +195,6 @@
             </dependencies>
             <properties>
                 <quarkus.profile>prod</quarkus.profile>
-            </properties>
-        </profile>
-
-        <!-- Native build profile -->
-        <profile>
-            <id>native</id>
-            <activation>
-                <property>
-                    <name>native</name>
-                </property>
-            </activation>
-            <properties>
-                <skipITs>false</skipITs>
-                <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
     </profiles>

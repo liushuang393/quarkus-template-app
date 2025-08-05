@@ -37,13 +37,15 @@ public class DatabaseInitializer {
         LOG.info("データベース初期化を開始します...");
         
         try {
-            if ("dev".equals(profile)) {
+            if ("dev".equals(profile) || "test".equals(profile)) {
+                LOG.infof("プロファイル '%s' でデータベース初期化を実行します", profile);
                 initializeDatabase("database-setup-h2.sql");
             } else if ("prod".equals(profile)) {
                 // 本番環境では手動でのスキーマ管理を推奨
                 LOG.info("本番環境のため、データベース初期化をスキップします");
             } else {
-                // テスト環境
+                // その他の環境（デフォルトでH2を使用）
+                LOG.infof("プロファイル '%s' でデータベース初期化を実行します", profile);
                 initializeDatabase("database-setup-h2.sql");
             }
             
@@ -59,31 +61,50 @@ public class DatabaseInitializer {
         try (Connection connection = dataSource.getConnection()) {
             // SQLスクリプトを読み込み
             String sql = loadSqlScript(scriptFile);
-            
+
             // SQLを実行
             try (Statement statement = connection.createStatement()) {
-                // セミコロンで分割して個別に実行
-                String[] statements = sql.split(";");
+                // 改良されたSQL分割処理
+                String[] statements = splitSqlStatements(sql);
                 for (String stmt : statements) {
                     String trimmedStmt = stmt.trim();
                     if (!trimmedStmt.isEmpty() && !trimmedStmt.startsWith("--")) {
-                        LOG.debugf("SQL実行: %s", trimmedStmt);
+                        LOG.infof("SQL実行: %s", trimmedStmt.substring(0, Math.min(100, trimmedStmt.length())) + "...");
                         try {
                             statement.execute(trimmedStmt);
+                            LOG.debugf("SQL実行成功: %s", trimmedStmt);
                         } catch (SQLException e) {
                             // インデックス作成エラーなどは警告として処理
                             if (trimmedStmt.toUpperCase().contains("CREATE INDEX")) {
                                 LOG.warnf("インデックス作成をスキップ: %s - %s", trimmedStmt, e.getMessage());
                             } else {
+                                LOG.errorf("SQL実行エラー: %s - %s", trimmedStmt, e.getMessage());
                                 throw e;
                             }
                         }
                     }
                 }
             }
-            
+
             LOG.info("SQLスクリプト実行完了: " + scriptFile);
         }
+    }
+
+    private String[] splitSqlStatements(String sql) {
+        // コメント行を除去
+        String[] lines = sql.split("\n");
+        StringBuilder cleanSql = new StringBuilder();
+
+        for (String line : lines) {
+            String trimmedLine = line.trim();
+            // コメント行をスキップ
+            if (!trimmedLine.startsWith("--") && !trimmedLine.isEmpty()) {
+                cleanSql.append(line).append("\n");
+            }
+        }
+
+        // セミコロンで分割（ただし、文字列内のセミコロンは除外）
+        return cleanSql.toString().split("(?<!\\w);(?!\\w)");
     }
     
     private String loadSqlScript(String filename) throws Exception {

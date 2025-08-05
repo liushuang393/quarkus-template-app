@@ -94,8 +94,14 @@ public class AuthResource {
                 String errorMessage = messageService.getMessage("error.authentication.failed", headers);
                 auditLogService.logFailure(null, request.username, "USER_LOGIN", "User", null, errorMessage);
 
+                com.example.dto.ErrorResponse errorResponse = new com.example.dto.ErrorResponse(
+                    "AUTHENTICATION_FAILED",
+                    errorMessage,
+                    "/auth/login"
+                );
+
                 return Response.status(401)
-                    .entity(Map.of("error", errorMessage))
+                    .entity(errorResponse)
                     .build();
             });
     }

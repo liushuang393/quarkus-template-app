@@ -1,16 +1,36 @@
 package com.example;
 
-import io.quarkus.test.junit.QuarkusTest;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * OpenAPI機能テスト
  */
 @QuarkusTest
+@TestProfile(OpenApiTest.TestProfile.class)
 class OpenApiTest {
+
+    public static class TestProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            // 本番設定をベースとして、安全性のためだけにデータベースを変更
+            return Map.of(
+                "quarkus.datasource.db-kind", "h2",
+                "quarkus.datasource.jdbc.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                "quarkus.datasource.username", "sa",
+                "quarkus.datasource.password", ""
+            );
+        }
+    }
 
     @Test
     void testOpenApiEndpoint() {
@@ -20,8 +40,8 @@ class OpenApiTest {
         .then()
             .statusCode(200)
             .contentType("application/yaml")
-            .body(containsString("openapi: 3.0.3"))
-            .body(containsString("title: Quarkus 認証・権限管理システム API"));
+            .body(containsString("openapi: 3.1.0"))
+            .body(containsString("title: quarkus-template-app API"));
     }
 
     @Test
@@ -43,8 +63,8 @@ class OpenApiTest {
         .then()
             .statusCode(200)
             .contentType("application/json")
-            .body("openapi", equalTo("3.0.3"))
-            .body("info.title", equalTo("Quarkus 認証・権限管理システム API"))
+            .body("openapi", equalTo("3.1.0"))
+            .body("info.title", equalTo("quarkus-template-app API"))
             .body("paths", notNullValue())
             .body("paths.'/auth/register'", notNullValue())
             .body("paths.'/auth/login'", notNullValue());

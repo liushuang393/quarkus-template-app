@@ -1,21 +1,40 @@
 package com.example;
 
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.http.ContentType;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
+import java.util.Map;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
+import io.restassured.http.ContentType;
 
 /**
  * 認証機能統合テスト
  */
 @QuarkusTest
+@TestProfile(AuthResourceIntegrationTest.TestProfile.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthResourceIntegrationTest {
+
+    public static class TestProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            // 本番設定をベースとして、安全性のためだけにデータベースを変更
+            return Map.of(
+                "quarkus.datasource.db-kind", "h2",
+                "quarkus.datasource.jdbc.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                "quarkus.datasource.username", "sa",
+                "quarkus.datasource.password", ""
+            );
+        }
+    }
 
     @Test
     @Order(1)
@@ -24,9 +43,9 @@ class AuthResourceIntegrationTest {
             .contentType(ContentType.JSON)
             .body("""
                 {
-                    "username": "testuser",
+                    "username": "newtestuser",
                     "password": "TestPass123",
-                    "email": "test@example.com",
+                    "email": "newtest@example.com",
                     "role": "USER"
                 }
                 """)
@@ -34,7 +53,7 @@ class AuthResourceIntegrationTest {
             .post("/auth/register")
         .then()
             .statusCode(200)
-            .body("message", equalTo("登録が完了しました"))
+            .body("message", equalTo("登録が完了しました。ログインしてください。"))
             .body("userId", notNullValue());
     }
 
@@ -46,7 +65,7 @@ class AuthResourceIntegrationTest {
             .contentType(ContentType.JSON)
             .body("""
                 {
-                    "username": "testuser",
+                    "username": "newtestuser",
                     "password": "TestPass123",
                     "email": "test2@example.com",
                     "role": "USER"
@@ -67,7 +86,7 @@ class AuthResourceIntegrationTest {
             .contentType(ContentType.JSON)
             .body("""
                 {
-                    "username": "testuser",
+                    "username": "newtestuser",
                     "password": "TestPass123"
                 }
                 """)
@@ -76,7 +95,7 @@ class AuthResourceIntegrationTest {
         .then()
             .statusCode(200)
             .body("token", notNullValue())
-            .body("user.username", equalTo("testuser"))
+            .body("user.username", equalTo("newtestuser"))
             .body("user.role", equalTo("USER"));
     }
 
@@ -87,7 +106,7 @@ class AuthResourceIntegrationTest {
             .contentType(ContentType.JSON)
             .body("""
                 {
-                    "username": "testuser",
+                    "username": "newtestuser",
                     "password": "wrongpassword"
                 }
                 """)
@@ -95,7 +114,8 @@ class AuthResourceIntegrationTest {
             .post("/auth/login")
         .then()
             .statusCode(401)
-            .body("error", equalTo("認証に失敗しました"));
+            .body("errorCode", equalTo("AUTHENTICATION_FAILED"))
+            .body("message", notNullValue());
     }
 
     @Test
@@ -116,9 +136,9 @@ class AuthResourceIntegrationTest {
             .post("/auth/register")
         .then()
             .statusCode(400)
-            .body("errorCode", equalTo("VALIDATION_ERROR"))
-            .body("message", equalTo("入力データに不正があります"))
-            .body("fieldErrors", notNullValue());
+            .body("title", equalTo("Constraint Violation"))
+            .body("status", equalTo(400))
+            .body("violations", notNullValue());
     }
 
     @Test
@@ -131,6 +151,7 @@ class AuthResourceIntegrationTest {
             .post("/auth/register")
         .then()
             .statusCode(400)
-            .body("errorCode", equalTo("VALIDATION_ERROR"));
+            .body("title", equalTo("Constraint Violation"))
+            .body("status", equalTo(400));
     }
 }

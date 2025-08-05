@@ -1,16 +1,34 @@
 package com.example;
 
-import io.quarkus.test.junit.QuarkusTest;
+import java.util.Map;
+
+import static org.hamcrest.CoreMatchers.containsString;
 import org.junit.jupiter.api.Test;
 
+import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
 
 /**
  * メトリクス機能テスト
  */
 @QuarkusTest
+@TestProfile(MetricsTest.TestProfile.class)
 class MetricsTest {
+
+    public static class TestProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            // 本番設定をベースとして、安全性のためだけにデータベースを変更
+            return Map.of(
+                "quarkus.datasource.db-kind", "h2",
+                "quarkus.datasource.jdbc.url", "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE",
+                "quarkus.datasource.username", "sa",
+                "quarkus.datasource.password", ""
+            );
+        }
+    }
 
     @Test
     void testMetricsEndpoint() {
@@ -19,7 +37,7 @@ class MetricsTest {
             .get("/q/metrics")
         .then()
             .statusCode(200)
-            .contentType("text/plain")
+            .contentType(containsString("application/openmetrics-text"))
             .body(containsString("# HELP"))
             .body(containsString("# TYPE"));
     }
