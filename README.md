@@ -27,7 +27,7 @@
 
 ```bash
 # 1. リポジトリクローン
-git clone <repository-url>
+git clone https://github.com/liushuang393/quarkus-template-app.git
 cd quarkus-template-app
 
 # 2. 開発モードで起動
@@ -101,7 +101,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 ```bash
 # JVMモードでDockerイメージ作成
 ./mvnw package
-docker build -f src/main/docker/Dockerfile.jvm -t quarkus-auth .
+docker build -f docker/Dockerfile.jvm -t quarkus-auth .
 
 # コンテナ起動
 docker run -i --rm -p 8080:8080 quarkus-auth
@@ -157,7 +157,28 @@ ls src/main/resources/META-INF/resources/*.pem
 4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
 5. プルリクエストを作成
 
-## 📄 ライセンス
+## � 謝辞
+
+このプロジェクトは以下の素晴らしいオープンソースプロジェクトによって支えられています：
+
+### 🚀 フレームワーク・ライブラリ
+- **[Quarkus](https://quarkus.io/)** - 超高速起動とクラウドネイティブJavaフレームワーク
+- **[MyBatis](https://mybatis.org/)** - 優れたSQL マッピングフレームワーク
+- **[Bootstrap](https://getbootstrap.com/)** - 世界で最も人気のあるCSSフレームワーク
+- **[jQuery](https://jquery.com/)** - 高速で軽量なJavaScriptライブラリ
+
+### 🛠️ 開発ツール
+- **[Maven](https://maven.apache.org/)** - プロジェクト管理とビルドツール
+- **[H2 Database](https://www.h2database.com/)** - 高速インメモリデータベース
+- **[PostgreSQL](https://www.postgresql.org/)** - 世界で最も先進的なオープンソースデータベース
+
+### 🔒 セキュリティ
+- **[SmallRye JWT](https://smallrye.io/)** - MicroProfile JWT実装
+- **[BCrypt](https://github.com/patrickfav/bcrypt)** - 安全なパスワードハッシュ化
+
+これらのプロジェクトの開発者とコントリビューターの皆様に深く感謝いたします。
+
+## �📄 ライセンス
 
 このプロジェクトは [MIT License](LICENSE) の下で公開されています。
 
@@ -165,7 +186,7 @@ ls src/main/resources/META-INF/resources/*.pem
 
 - 📖 [Quarkus公式ドキュメント](https://quarkus.io/guides/)
 - 💬 [Quarkus Zulip Chat](https://quarkusio.zulipchat.com/)
-- 🐛 [GitHub Issues](https://github.com/your-repo/issues)
+- 🐛 [GitHub Issues](https://github.com/liushuang393/quarkus-template-app/issues)
 
 ---
 
@@ -173,6 +194,6 @@ ls src/main/resources/META-INF/resources/*.pem
 
 **Made with ❤️ using Quarkus**
 
-[⭐ Star this repo](https://github.com/your-repo) • [🐛 Report Bug](https://github.com/your-repo/issues) • [✨ Request Feature](https://github.com/your-repo/issues)
+[⭐ Star this repo](https://github.com/liushuang393/quarkus-template-app) • [🐛 Report Bug](https://github.com/liushuang393/quarkus-template-app/issues) • [✨ Request Feature](https://github.com/liushuang393/quarkus-template-app/issues)
 
 </div>
