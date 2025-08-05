@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-
+chcp 65001
 REM =====================================================
 REM Quarkusテンプレートプロジェクト作成スクリプト (Windows版)
 REM =====================================================
