@@ -18,8 +18,8 @@ quarkus:
   log:
     level: INFO
     category:
-      com.example: DEBUG
-      com.example.mapper: DEBUG
+      "com.example": DEBUG
+      "com.example.mapper": DEBUG
     console:
       enable: true
       format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"

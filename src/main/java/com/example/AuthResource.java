@@ -25,12 +25,15 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.logging.Logger;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "認証", description = "ユーザー認証関連のAPI")
 public class AuthResource {
+
+  private static final Logger LOG = Logger.getLogger(AuthResource.class);
 
   @Inject UserService userService;
 
@@ -57,14 +60,40 @@ public class AuthResource {
               mediaType = "application/json",
               schema = @Schema(implementation = com.example.dto.ErrorResponse.class)))
   public Response register(@jakarta.validation.Valid RegisterRequest request) {
-    User user = userService.register(request, headers);
+    LOG.infof("ユーザー登録リクエスト受信: username=%s, email=%s", request.username, request.email);
 
-    // 監査ログ記録
-    auditLogService.logSuccess(
-        user.getId(), user.getUsername(), "USER_REGISTER", "User", user.getId().toString());
+    try {
+      User user = userService.register(request, headers);
 
-    String message = messageService.getMessage("auth.register.success", headers);
-    return Response.ok(Map.of("message", message, "userId", user.getId())).build();
+      // 監査ログ記録（成功）
+      auditLogService.logSuccess(
+          user.getId(), user.getUsername(), "USER_REGISTER", "User", user.getId().toString());
+
+      String message = messageService.getMessage("auth.register.success", headers);
+      LOG.infof("ユーザー登録完了: userId=%d, username=%s", user.getId(), user.getUsername());
+      return Response.ok(Map.of("message", message, "userId", user.getId())).build();
+
+    } catch (com.example.exception.BusinessException e) {
+      // ビジネス例外（ユーザー重複など）
+      LOG.warnf("ユーザー登録ビジネスエラー: username=%s, error=%s", request.username, e.getMessage());
+
+      // 監査ログ記録（失敗）
+      auditLogService.logFailure(
+          null, request.username, "USER_REGISTER", "User", null, e.getMessage());
+
+      // GlobalExceptionMapperで処理されるため、例外を再スロー
+      throw e;
+
+    } catch (Exception e) {
+      // 予期しない例外
+      LOG.errorf(e, "ユーザー登録中に予期しないエラーが発生: username=%s", request.username);
+
+      // 監査ログ記録（失敗）
+      auditLogService.logFailure(null, request.username, "USER_REGISTER", "User", null, "システムエラー");
+
+      // 内部サーバーエラーとして処理
+      throw new RuntimeException("ユーザー登録に失敗しました", e);
+    }
   }
 
   @POST

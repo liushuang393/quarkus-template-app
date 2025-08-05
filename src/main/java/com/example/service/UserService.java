@@ -14,9 +14,12 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.core.HttpHeaders;
 import java.util.Optional;
+import org.jboss.logging.Logger;
 
 @ApplicationScoped
 public class UserService {
+
+  private static final Logger LOG = Logger.getLogger(UserService.class);
 
   @Inject MessageService messageService;
 
@@ -24,20 +27,37 @@ public class UserService {
 
   @Transactional
   public User register(RegisterRequest request, HttpHeaders headers) {
-    Optional<User> existingUser = userMapper.findByUsername(request.username);
-    if (existingUser.isPresent()) {
-      String message = messageService.getMessage("error.user.already.exists", headers);
-      throw new com.example.exception.BusinessException("USER_ALREADY_EXISTS", message);
+    LOG.infof("ユーザー登録開始: username=%s, email=%s", request.username, request.email);
+
+    try {
+      // 重複チェック
+      Optional<User> existingUser = userMapper.findByUsername(request.username);
+      if (existingUser.isPresent()) {
+        LOG.warnf("ユーザー登録失敗: ユーザー名が既に存在します - username=%s", request.username);
+        String message = messageService.getMessage("error.user.already.exists", headers);
+        throw new com.example.exception.BusinessException("USER_ALREADY_EXISTS", message);
+      }
+
+      // ユーザー作成
+      User user = new User();
+      user.setUsername(request.username);
+      user.setPassword(BcryptUtil.bcryptHash(request.password));
+      user.setEmail(request.email);
+      user.setRole(request.role);
+
+      LOG.debugf("ユーザーデータベース挿入開始: username=%s", request.username);
+      userMapper.insert(user);
+
+      LOG.infof("ユーザー登録成功: userId=%d, username=%s", user.getId(), user.getUsername());
+      return user;
+
+    } catch (com.example.exception.BusinessException e) {
+      // ビジネス例外は再スロー
+      throw e;
+    } catch (Exception e) {
+      LOG.errorf(e, "ユーザー登録中に予期しないエラーが発生しました: username=%s", request.username);
+      throw new RuntimeException("ユーザー登録に失敗しました", e);
     }
-
-    User user = new User();
-    user.setUsername(request.username);
-    user.setPassword(BcryptUtil.bcryptHash(request.password));
-    user.setEmail(request.email);
-    user.setRole(request.role);
-    userMapper.insert(user);
-
-    return user;
   }
 
   @Transactional
