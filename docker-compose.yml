@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # PostgreSQL データベース
+  postgres:
+    image: postgres:15
+    container_name: quarkus-auth-postgres
+    environment:
+      POSTGRES_DB: quarkus_auth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./ddl/database-setup.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - quarkus-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Quarkus アプリケーション (JVMモード)
+  quarkus-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.jvm
+    container_name: quarkus-auth-app
+    environment:
+      - QUARKUS_PROFILE=prod
+      - DB_URL=jdbc:postgresql://postgres:5432/quarkus_auth
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=password
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - quarkus-network
+    volumes:
+      - ./logs:/deployments/logs
+
+  # pgAdmin (データベース管理ツール)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: quarkus-auth-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - quarkus-network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  quarkus-network:
+    driver: bridge

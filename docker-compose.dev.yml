@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # PostgreSQL データベース (開発環境用)
+  postgres-dev:
+    image: postgres:15
+    container_name: quarkus-auth-postgres-dev
+    environment:
+      POSTGRES_DB: quarkus_auth_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"  # 開発用ポート
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./ddl/database-setup.sql:/docker-entrypoint-initdb.d/01-init.sql
+    networks:
+      - quarkus-dev-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis (キャッシュ用 - 将来の拡張用)
+  redis-dev:
+    image: redis:7-alpine
+    container_name: quarkus-auth-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - quarkus-dev-network
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_dev_data:/data
+
+  # pgAdmin (開発環境用)
+  pgadmin-dev:
+    image: dpage/pgadmin4:latest
+    container_name: quarkus-auth-pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@example.com
+      PGADMIN_DEFAULT_PASSWORD: dev123
+    ports:
+      - "5051:80"  # 開発用ポート
+    depends_on:
+      - postgres-dev
+    networks:
+      - quarkus-dev-network
+    volumes:
+      - pgadmin_dev_data:/var/lib/pgadmin
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  pgadmin_dev_data:
+
+networks:
+  quarkus-dev-network:
+    driver: bridge

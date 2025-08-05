@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{messages.title}</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/auth.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <select id="language-select" class="form-select form-select-sm">
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="zh">中文</option>
+        </select>
+    </div>
+
+    <!-- ログイン・登録フォーム -->
+    <div id="auth-container" class="auth-container">
+        <div class="auth-header">
+            <h1>{messages.header}</h1>
+            <p>{messages.description}</p>
+        </div>
+
+        <!-- メッセージ表示エリア -->
+        <div id="message" class="alert d-none" role="alert"></div>
+
+        <!-- ログインフォーム -->
+        <form id="login-form" class="auth-form">
+            <div class="mb-3">
+                <label for="login-username" class="form-label">{messages.username}</label>
+                <input type="text" id="login-username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="login-password" class="form-label">{messages.password}</label>
+                <input type="password" id="login-password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 mb-3">{messages.loginButton}</button>
+        </form>
+
+        <!-- 登録フォーム -->
+        <form id="register-form" class="auth-form d-none">
+            <div class="mb-3">
+                <label for="register-username" class="form-label">{messages.registerUsername}</label>
+                <input type="text" id="register-username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="register-email" class="form-label">{messages.registerEmail}</label>
+                <input type="email" id="register-email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="register-password" class="form-label">{messages.registerPassword}</label>
+                <input type="password" id="register-password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="register-role" class="form-label">{messages.registerRole}</label>
+                <select id="register-role" name="role" class="form-select" required>
+                    <option value="USER">{messages.roleUser}</option>
+                    <option value="SALES">{messages.roleSales}</option>
+                    <option value="ADMIN">{messages.roleAdmin}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100 mb-3">{messages.registerButton}</button>
+        </form>
+
+        <!-- フォーム切り替えリンク -->
+        <div class="text-center">
+            <a href="#" id="toggle-form" class="toggle-link">{messages.loginToggle}</a>
+        </div>
+    </div>
+
+    <!-- メニュー画面 -->
+    <div id="menu-container" class="menu-container d-none">
+        <div class="menu-header">
+            <h2>{messages.menuTitle}</h2>
+            <div class="user-info">
+                <span class="user-name">{messages.menuUser} <strong id="user-name"></strong></span>
+                <span class="user-role">{messages.menuRole} <span id="user-role" class="badge bg-primary"></span></span>
+                <button id="logout-btn" class="btn btn-outline-danger btn-sm ms-3">{messages.menuLogout}</button>
+            </div>
+        </div>
+        <div id="menu-items" class="menu-items"></div>
+    </div>
+
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="/js/auth.js"></script>
+</body>
+</html>

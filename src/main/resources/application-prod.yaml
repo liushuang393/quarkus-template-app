@@ -1,0 +1,43 @@
+# 生产环境配置
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+    jdbc:
+      url: ${DB_URL:jdbc:postgresql://localhost:5432/quarkus_auth}
+      min-size: 5
+      max-size: 20
+  
+  # MyBatis configuration for production
+  mybatis:
+    mapper-locations: classpath*:mapper/*.xml
+    configuration:
+      map-underscore-to-camel-case: true
+  
+  # Production logging
+  log:
+    level: INFO
+    category:
+      com.example: INFO
+    console:
+      enable: true
+      format: "%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n"
+      json: false
+  
+  # CORS configuration for production
+  http:
+    cors:
+      origins: "${CORS_ORIGINS:https://yourdomain.com}"
+      headers: "accept, authorization, content-type, x-requested-with"
+      methods: "GET,PUT,POST,DELETE,OPTIONS"
+  
+  # JWT configuration
+  smallrye-jwt:
+    enabled: true
+  
+  # Production security settings
+  security:
+    users:
+      embedded:
+        enabled: false
