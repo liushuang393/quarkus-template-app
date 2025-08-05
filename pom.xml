@@ -186,7 +186,7 @@
             </properties>
         </profile>
 
-        <!-- 本番環境 -->
+        <!-- 本番環境（デフォルトでNative編譯） -->
         <profile>
             <id>prod</id>
             <dependencies>
@@ -197,6 +197,22 @@
             </dependencies>
             <properties>
                 <quarkus.profile>prod</quarkus.profile>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
+            </properties>
+        </profile>
+
+        <!-- 開発環境Native編譯オプション -->
+        <profile>
+            <id>dev-native</id>
+            <dependencies>
+                <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-jdbc-h2</artifactId>
+                </dependency>
+            </dependencies>
+            <properties>
+                <quarkus.profile>dev</quarkus.profile>
+                <quarkus.native.enabled>true</quarkus.native.enabled>
             </properties>
         </profile>
     </profiles>

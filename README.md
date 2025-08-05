@@ -159,7 +159,7 @@ pre-commit install
 #### 2. 開発・テスト
 
 ```bash
-# 開発モードで起動（ホットリロード有効）
+# 開発モードで起動（ホットリロード有効-DskipTests=true でテストスキップ可）
 ./mvnw quarkus:dev
 
 # JVMモードでビルド（開発環境）
@@ -195,20 +195,36 @@ pre-commit run maven-dependency-check
 
 #### 4. ビルド・パッケージング
 
+### 📊 **編譯方式対比**
+
+| 環境 | JVMビルド | Nativeビルド | デフォルト |
+|------|-----------|--------------|-----------|
+| **開発環境** | `./mvnw clean package -Pdev` | `./mvnw clean package -Pdev-native` | JVM |
+| **本番環境** | `./mvnw clean package -Pprod -Dquarkus.native.enabled=false` | `./mvnw clean package -Pprod` | **Native** |
+
+### 🛠️ **ビルドコマンド**
+
 ```bash
-# 開発環境用ビルド（H2データベース）
+# 開発環境用ビルド（JVM - H2データベース）
 ./mvnw clean package -Pdev
 
-# 本番環境用ビルド（PostgreSQL）
+# 開発環境用ネイティブビルド（Native - H2データベース）
+./mvnw clean package -Pdev-native
+
+# 本番環境用ビルド（デフォルトでNative - PostgreSQL）
 ./mvnw clean package -Pprod
 
-# ネイティブビルド（開発環境）
-./mvnw clean package -Pdev -Dnative
+# 本番環境でJVMビルドが必要な場合
+./mvnw clean package -Pprod -Dquarkus.native.enabled=false
+```
 
-# ネイティブビルド（本番環境）
-./mvnw clean package -Pprod -Dnative
+### 🚀 **実行方法**
 
-# ネイティブビルドテスト
+```bash
+# JVMビルドの場合
+java -jar target/quarkus-app/quarkus-run.jar
+
+# Nativeビルドの場合
 ./target/quarkus-template-app-1.0.0-SNAPSHOT-runner
 ```
 
