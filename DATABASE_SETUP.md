@@ -20,12 +20,14 @@ quarkus-template-app/
 開発環境では、H2インメモリデータベースを使用します。
 
 #### 自動セットアップ
+
 ```bash
 # 開発モードで起動（自動的にテーブル作成・データ投入）
 ./mvnw quarkus:dev -Pdev
 ```
 
 #### 手動セットアップ
+
 ```bash
 # H2コンソールにアクセス
 # URL: http://localhost:8080/h2-console
@@ -40,6 +42,7 @@ quarkus-template-app/
 ### 🚀 本番環境（PostgreSQL）
 
 #### 1. PostgreSQLインストール
+
 ```bash
 # Ubuntu/Debian
 sudo apt update
@@ -64,6 +67,7 @@ docker run --name postgres-auth \
 ```
 
 #### 2. データベース作成
+
 ```bash
 # PostgreSQLに接続
 sudo -u postgres psql
@@ -83,12 +87,14 @@ CREATE DATABASE quarkus_auth
 ```
 
 #### 3. DDL実行
+
 ```bash
 # SQLファイル実行
 psql -h localhost -U postgres -d quarkus_auth -f database-setup.sql
 ```
 
 #### 4. アプリケーション用ユーザー作成（推奨）
+
 ```sql
 -- アプリケーション専用ユーザー作成
 CREATE USER quarkus_app WITH PASSWORD 'your_secure_password_here';
@@ -109,48 +115,51 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO qu
 ### テーブル構成
 
 #### users テーブル
-| カラム名 | データ型 | 制約 | 説明 |
-|---------|---------|------|------|
-| id | BIGSERIAL | PRIMARY KEY | ユーザーID |
-| username | VARCHAR(50) | NOT NULL, UNIQUE | ユーザー名 |
-| password | VARCHAR(255) | NOT NULL | パスワード（BCryptハッシュ） |
-| email | VARCHAR(100) | NOT NULL | メールアドレス |
-| role | VARCHAR(20) | NOT NULL | ロール（ADMIN/USER/SALES） |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
-| is_active | BOOLEAN | NOT NULL | アクティブフラグ |
+
+| カラム名   | データ型     | 制約             | 説明                         |
+| ---------- | ------------ | ---------------- | ---------------------------- |
+| id         | BIGSERIAL    | PRIMARY KEY      | ユーザーID                   |
+| username   | VARCHAR(50)  | NOT NULL, UNIQUE | ユーザー名                   |
+| password   | VARCHAR(255) | NOT NULL         | パスワード（BCryptハッシュ） |
+| email      | VARCHAR(100) | NOT NULL         | メールアドレス               |
+| role       | VARCHAR(20)  | NOT NULL         | ロール（ADMIN/USER/SALES）   |
+| created_at | TIMESTAMP    | NOT NULL         | 作成日時                     |
+| is_active  | BOOLEAN      | NOT NULL         | アクティブフラグ             |
 
 #### audit_logs テーブル
-| カラム名 | データ型 | 制約 | 説明 |
-|---------|---------|------|------|
-| id | BIGSERIAL | PRIMARY KEY | ログID |
-| user_id | BIGINT | FOREIGN KEY | ユーザーID |
-| username | VARCHAR(50) | NOT NULL | ユーザー名 |
-| action | VARCHAR(100) | NOT NULL | アクション |
-| resource_type | VARCHAR(50) | | リソースタイプ |
-| resource_id | VARCHAR(100) | | リソースID |
-| details | TEXT | | 詳細情報 |
-| ip_address | VARCHAR(45) | | IPアドレス |
-| user_agent | TEXT | | ユーザーエージェント |
-| request_id | VARCHAR(100) | | リクエストID |
-| status | VARCHAR(20) | NOT NULL | ステータス |
-| error_message | TEXT | | エラーメッセージ |
-| created_at | TIMESTAMP | NOT NULL | 作成日時 |
+
+| カラム名      | データ型     | 制約        | 説明                 |
+| ------------- | ------------ | ----------- | -------------------- |
+| id            | BIGSERIAL    | PRIMARY KEY | ログID               |
+| user_id       | BIGINT       | FOREIGN KEY | ユーザーID           |
+| username      | VARCHAR(50)  | NOT NULL    | ユーザー名           |
+| action        | VARCHAR(100) | NOT NULL    | アクション           |
+| resource_type | VARCHAR(50)  |             | リソースタイプ       |
+| resource_id   | VARCHAR(100) |             | リソースID           |
+| details       | TEXT         |             | 詳細情報             |
+| ip_address    | VARCHAR(45)  |             | IPアドレス           |
+| user_agent    | TEXT         |             | ユーザーエージェント |
+| request_id    | VARCHAR(100) |             | リクエストID         |
+| status        | VARCHAR(20)  | NOT NULL    | ステータス           |
+| error_message | TEXT         |             | エラーメッセージ     |
+| created_at    | TIMESTAMP    | NOT NULL    | 作成日時             |
 
 ## 初期データ
 
 ### 初期ユーザー
 
-| ユーザー名 | パスワード | ロール | 用途 |
-|-----------|-----------|-------|------|
-| admin | AdminPass123 | ADMIN | 管理者 |
-| sales | SalesPass123 | SALES | 営業担当 |
-| user | UserPass123 | USER | 一般ユーザー |
-| testuser | Password123 | USER | テスト用 |
-| demouser | DemoPass123 | USER | デモ用 |
+| ユーザー名 | パスワード   | ロール | 用途         |
+| ---------- | ------------ | ------ | ------------ |
+| admin      | AdminPass123 | ADMIN  | 管理者       |
+| sales      | SalesPass123 | SALES  | 営業担当     |
+| user       | UserPass123  | USER   | 一般ユーザー |
+| testuser   | Password123  | USER   | テスト用     |
+| demouser   | DemoPass123  | USER   | デモ用       |
 
 ### パスワードハッシュ
 
 すべてのパスワードはBCryptでハッシュ化されています：
+
 ```
 $2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2
 ```
@@ -158,6 +167,7 @@ $2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2
 ## メンテナンス
 
 ### バックアップ
+
 ```bash
 # データベース全体のバックアップ
 pg_dump -h localhost -U postgres -d quarkus_auth > quarkus_auth_backup.sql
@@ -167,12 +177,14 @@ pg_dump -h localhost -U postgres -d quarkus_auth --data-only > quarkus_auth_data
 ```
 
 ### リストア
+
 ```bash
 # データベースリストア
 psql -h localhost -U postgres -d quarkus_auth < quarkus_auth_backup.sql
 ```
 
 ### 監査ログクリーンアップ
+
 ```sql
 -- 90日以上前の監査ログ削除
 DELETE FROM audit_logs WHERE created_at < CURRENT_DATE - INTERVAL '90 days';
@@ -183,6 +195,7 @@ DELETE FROM audit_logs WHERE created_at < CURRENT_DATE - INTERVAL '90 days';
 ### よくある問題
 
 #### 1. 接続エラー
+
 ```bash
 # PostgreSQL接続確認
 psql -h localhost -U postgres -d quarkus_auth
@@ -192,6 +205,7 @@ cat /etc/postgresql/*/main/pg_hba.conf
 ```
 
 #### 2. 権限エラー
+
 ```sql
 -- ユーザー権限確認
 \du
@@ -201,6 +215,7 @@ cat /etc/postgresql/*/main/pg_hba.conf
 ```
 
 #### 3. 文字化け
+
 ```sql
 -- データベース文字コード確認
 SELECT datname, datcollate, datctype FROM pg_database WHERE datname = 'quarkus_auth';
@@ -224,6 +239,7 @@ SELECT datname, datcollate, datctype FROM pg_database WHERE datname = 'quarkus_a
    - セキュリティアップデート
 
 ### パスワード変更例
+
 ```sql
 -- 初期ユーザーのパスワード変更
 UPDATE users SET password = '$2a$10$NEW_HASH_HERE' WHERE username = 'admin';
@@ -258,7 +274,7 @@ SELECT action, status, COUNT(*) FROM audit_logs GROUP BY action, status;
 
 1. アプリケーションログ
 2. データベースログ
-3. 設定ファイル（application-*.yaml）
+3. 設定ファイル（application-\*.yaml）
 4. ネットワーク接続
 
 詳細なトラブルシューティングについては、README.mdを参照してください。

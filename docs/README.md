@@ -5,24 +5,30 @@
 ## 📚 ドキュメント一覧
 
 ### 🎨 フロントエンド
+
 - [**フロントエンド開発ガイド**](frontend-guide.md) - HTML、CSS、jQuery、Bootstrap 5を使用したUI開発
 - [**コンポーネントガイド**](component-guide.md) - 再利用可能なUIコンポーネントの作成方法
 
 ### 🔧 バックエンド
+
 - [**コントローラー層ガイド**](controller-guide.md) - REST APIエンドポイントの実装
 - [**サービス層ガイド**](service-guide.md) - ビジネスロジックの実装
 - [**データベース層ガイド**](database-guide.md) - MyBatisを使用したデータアクセス層の実装
 
 ### 🗄️ データベース
+
 - [**SQLガイド**](sql-guide.md) - データベース設計とSQL実装のベストプラクティス
 
 ### 🔒 セキュリティ
+
 - [**セキュリティガイド**](security-guide.md) - JWT認証とロールベースアクセス制御の実装
 
 ### 🌐 国際化
+
 - [**国際化ガイド**](i18n-guide.md) - 多言語対応の実装方法
 
 ### 🧪 テスト
+
 - [**テストガイド**](testing-guide.md) - 単体テストと統合テストの実装
 
 ## 🚀 クイックスタート
@@ -34,17 +40,20 @@
 ## 📋 開発規約
 
 ### コーディング規約
+
 - **Java**: Google Java Style Guideに準拠
 - **JavaScript**: ESLint推奨設定を使用
 - **SQL**: 大文字小文字の統一、適切なインデント
 
 ### 命名規約
+
 - **クラス名**: PascalCase (例: `UserService`)
 - **メソッド名**: camelCase (例: `getUserById`)
 - **定数**: UPPER_SNAKE_CASE (例: `MAX_RETRY_COUNT`)
 - **データベース**: snake_case (例: `user_id`)
 
 ### ファイル構成
+
 ```
 src/main/java/com/example/
 ├── controller/     # REST APIコントローラー
@@ -68,16 +77,19 @@ src/main/java/com/example/
 ## 🛠️ 開発ツール
 
 ### 推奨IDE
+
 - **IntelliJ IDEA** (推奨)
 - **Eclipse**
 - **Visual Studio Code**
 
 ### 必須プラグイン
+
 - **Lombok**: ボイラープレートコード削減
 - **MyBatis**: SQLマッピング支援
 - **Quarkus**: 開発効率向上
 
 ### デバッグツール
+
 - **Quarkus Dev UI**: http://localhost:8080/q/dev/
 - **H2 Console**: http://localhost:8080/h2-console (開発環境)
 - **Swagger UI**: http://localhost:8080/q/swagger-ui

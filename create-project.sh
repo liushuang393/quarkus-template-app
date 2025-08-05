@@ -25,7 +25,7 @@ if [ $# -eq 0 ]; then
     echo "引数が指定されていません。デフォルトパスを使用します。"
     echo "デフォルトパス: $TARGET_PATH"
     echo ""
-    read -p "このパスでよろしいですか？ (Y/N または新しいパスを入力): " USER_INPUT
+    read -r -p "このパスでよろしいですか？ (Y/N または新しいパスを入力): " USER_INPUT
 
     if [ "$USER_INPUT" = "N" ] || [ "$USER_INPUT" = "n" ]; then
         echo "処理を中止しました。"
@@ -59,7 +59,7 @@ PARENT_DIR=$(dirname "$TARGET_PATH")
 if [ ! -d "$PARENT_DIR" ]; then
     echo "親ディレクトリを作成中: $PARENT_DIR"
     mkdir -p "$PARENT_DIR"
-    if [ $? -ne 0 ]; then
+    if ! git clone https://github.com/liushuang393/quarkus-template-app.git "$TARGET_PATH"; then
         echo "エラー: 親ディレクトリの作成に失敗しました。"
         exit 1
     fi
@@ -73,7 +73,7 @@ SOURCE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ターゲットディレクトリを作成
 mkdir -p "$TARGET_PATH"
-if [ $? -ne 0 ]; then
+if ! cd "$TARGET_PATH"; then
     echo "エラー: ターゲットディレクトリの作成に失敗しました。"
     exit 1
 fi

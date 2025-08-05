@@ -14,11 +14,114 @@ repos:
       - id: check-merge-conflict
       - id: check-case-conflict
       - id: check-added-large-files
-        args: ['--maxkb=1000']
+        args: ["--maxkb=1000"]
 
-  # Java formatting
+      - id: mixed-line-ending
+      - id: check-executables-have-shebangs
+
+  # Java formatting with Google Java Format
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.12.0
     hooks:
       - id: pretty-format-java
         args: [--autofix]
+        exclude: ^(\.mvn/|target/|node_modules/|\.git/|\.idea/|\.vscode/|\.settings/|build/|dist/|.*MavenWrapperDownloader\.java|.*/generated/.*)
+
+  # Note: YAML formatting removed due to Windows encoding issues
+  # Basic YAML syntax checking is handled by check-yaml hook above
+
+  # Maven dependency check
+  - repo: local
+    hooks:
+      - id: maven-dependency-check
+        name: Maven Dependency Vulnerability Check
+        entry: bash scripts/check-dependencies.sh
+        language: system
+        files: pom\.xml$
+        pass_filenames: false
+
+  # Security scanning with Bandit (Python alternative to Semgrep for Java)
+  # Note: Semgrep has Windows compatibility issues with long filenames
+  # Using local security checks instead
+  - repo: local
+    hooks:
+      - id: security-check
+        name: Basic Security Pattern Check
+        entry: bash scripts/check-security-patterns.sh
+        language: system
+        files: \.java$
+        exclude: ^(\.mvn/|target/|node_modules/|\.git/|\.idea/|\.vscode/|\.settings/|build/|dist/|.*MavenWrapperDownloader\.java|.*/generated/.*|.*\.class|.*\.jar|.*\.war|.*\.ear)
+        pass_filenames: true
+
+  # Quarkus Native Build Compatibility Checks
+  - repo: local
+    hooks:
+      - id: quarkus-native-compatibility
+        name: Quarkus Native Build Compatibility Check
+        entry: bash scripts/check-native-compatibility.sh
+        language: system
+        files: \.java$
+        exclude: ^(\.mvn/|target/|node_modules/|\.git/|\.idea/|\.vscode/|\.settings/|build/|dist/|.*MavenWrapperDownloader\.java|.*/generated/.*|.*\.class|.*\.jar|.*\.war|.*\.ear)
+        pass_filenames: true
+
+      - id: qute-template-validation
+        name: Qute Template Validation
+        entry: bash scripts/check-qute-templates.sh
+        language: system
+        files: \.html$
+        pass_filenames: true
+
+      - id: reflection-config-check
+        name: Reflection Configuration Check
+        entry: bash scripts/check-reflection-usage.sh
+        language: system
+        files: \.java$
+        exclude: ^(\.mvn/|target/|node_modules/|\.git/|\.idea/|\.vscode/|\.settings/|build/|dist/|.*MavenWrapperDownloader\.java|.*/generated/.*|.*\.class|.*\.jar|.*\.war|.*\.ear)
+        pass_filenames: true
+
+  # License header check
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: insert-license
+        files: \.java$
+        exclude: ^(\.mvn/|target/|node_modules/|\.git/|\.idea/|\.vscode/|\.settings/|build/|dist/|.*MavenWrapperDownloader\.java|.*/generated/.*)
+        args:
+          - --license-filepath
+          - LICENSE_HEADER.txt
+          - --comment-style
+          - //
+
+  # Dockerfile linting (disabled - Docker not installed)
+  # - repo: https://github.com/hadolint/hadolint
+  #   rev: v2.12.0
+  #   hooks:
+  #     - id: hadolint-docker
+  #       files: docker/Dockerfile.*
+
+  # Shell script linting
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+        files: \.(sh|bash)$
+
+  # Git commit message validation
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+
+# Configuration for specific hooks
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

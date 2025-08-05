@@ -77,7 +77,8 @@ check_quarkus_extensions() {
     echo "  Validating Quarkus extensions..."
 
     # Check if all io.quarkus dependencies are compatible versions
-    local quarkus_version=$(grep -o "quarkus\.platform\.version>[^<]*" pom.xml | cut -d'>' -f2 | head -1)
+    local quarkus_version
+    quarkus_version=$(grep -o "quarkus\.platform\.version>[^<]*" pom.xml | cut -d'>' -f2 | head -1)
 
     if [[ -n "$quarkus_version" ]]; then
         echo "✅ Quarkus platform version: $quarkus_version"

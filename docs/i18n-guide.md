@@ -407,106 +407,129 @@ public class MessageService {
 ```html
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{messages.title}</title>
     <!-- Bootstrap CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- Custom CSS -->
-    <link href="/css/auth.css" rel="stylesheet">
-</head>
-<body>
+    <link href="/css/auth.css" rel="stylesheet" />
+  </head>
+  <body>
     <!-- Language Selector -->
     <div class="language-selector">
-        <select id="language-select" class="form-select form-select-sm">
-            <option value="en">English</option>
-            <option value="ja">日本語</option>
-            <option value="zh">中文</option>
-        </select>
+      <select id="language-select" class="form-select form-select-sm">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="zh">中文</option>
+      </select>
     </div>
 
     <!-- ログイン・登録フォーム -->
     <div id="auth-container" class="auth-container">
-        <div class="auth-header">
-            <h1>{messages.header}</h1>
-            <p>{messages.description}</p>
-        </div>
+      <div class="auth-header">
+        <h1>{messages.header}</h1>
+        <p>{messages.description}</p>
+      </div>
 
-        <!-- ログインフォーム -->
-        <form id="login-form" class="auth-form">
-            <div class="mb-3">
-                <label for="login-username" class="form-label">{messages.username}</label>
-                <input type="text" id="login-username" name="username" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="login-password" class="form-label">{messages.password}</label>
-                <input type="password" id="login-password" name="password" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">{messages.loginButton}</button>
-        </form>
-
-        <!-- フォーム切り替えリンク -->
-        <div class="text-center">
-            <a href="#" id="toggle-form" class="toggle-link">{messages.loginToggle}</a>
+      <!-- ログインフォーム -->
+      <form id="login-form" class="auth-form">
+        <div class="mb-3">
+          <label for="login-username" class="form-label"
+            >{messages.username}</label
+          >
+          <input
+            type="text"
+            id="login-username"
+            name="username"
+            class="form-control"
+            required
+          />
         </div>
+        <div class="mb-3">
+          <label for="login-password" class="form-label"
+            >{messages.password}</label
+          >
+          <input
+            type="password"
+            id="login-password"
+            name="password"
+            class="form-control"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary w-100 mb-3">
+          {messages.loginButton}
+        </button>
+      </form>
+
+      <!-- フォーム切り替えリンク -->
+      <div class="text-center">
+        <a href="#" id="toggle-form" class="toggle-link"
+          >{messages.loginToggle}</a
+        >
+      </div>
     </div>
 
     <!-- JavaScript -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="/js/auth.js"></script>
-</body>
+  </body>
 </html>
 ```
 
 ### JavaScript言語切り替え
 
 ```javascript
-$(document).ready(function() {
-    // 言語切り替え
-    $('#language-select').on('change', function() {
-        const selectedLang = $(this).val();
-        const currentUrl = new URL(window.location);
-        currentUrl.searchParams.set('lang', selectedLang);
-        window.location.href = currentUrl.toString();
+$(document).ready(function () {
+  // 言語切り替え
+  $("#language-select").on("change", function () {
+    const selectedLang = $(this).val();
+    const currentUrl = new URL(window.location);
+    currentUrl.searchParams.set("lang", selectedLang);
+    window.location.href = currentUrl.toString();
+  });
+
+  // URLパラメータから現在の言語を取得して選択状態を設定
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentLang = urlParams.get("lang") || getDefaultLanguage();
+  $("#language-select").val(currentLang);
+
+  // ブラウザの言語設定から推測
+  function getDefaultLanguage() {
+    const browserLang = navigator.language || navigator.userLanguage;
+    if (browserLang.startsWith("ja")) return "ja";
+    if (browserLang.startsWith("zh")) return "zh";
+    return "en";
+  }
+
+  // 動的メッセージ更新（AJAX経由）
+  function updateMessages(lang) {
+    $.ajax({
+      url: "/api/messages",
+      method: "GET",
+      headers: {
+        "Accept-Language": lang,
+      },
+      success: function (messages) {
+        updateUIMessages(messages);
+      },
     });
+  }
 
-    // URLパラメータから現在の言語を取得して選択状態を設定
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentLang = urlParams.get('lang') || getDefaultLanguage();
-    $('#language-select').val(currentLang);
-
-    // ブラウザの言語設定から推測
-    function getDefaultLanguage() {
-        const browserLang = navigator.language || navigator.userLanguage;
-        if (browserLang.startsWith('ja')) return 'ja';
-        if (browserLang.startsWith('zh')) return 'zh';
-        return 'en';
-    }
-
-    // 動的メッセージ更新（AJAX経由）
-    function updateMessages(lang) {
-        $.ajax({
-            url: '/api/messages',
-            method: 'GET',
-            headers: {
-                'Accept-Language': lang
-            },
-            success: function(messages) {
-                updateUIMessages(messages);
-            }
-        });
-    }
-
-    function updateUIMessages(messages) {
-        // 動的にメッセージを更新
-        $('[data-message-key]').each(function() {
-            const key = $(this).data('message-key');
-            if (messages[key]) {
-                $(this).text(messages[key]);
-            }
-        });
-    }
+  function updateUIMessages(messages) {
+    // 動的にメッセージを更新
+    $("[data-message-key]").each(function () {
+      const key = $(this).data("message-key");
+      if (messages[key]) {
+        $(this).text(messages[key]);
+      }
+    });
+  }
 });
 ```
 

@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # PostgreSQL データベース (開発環境用)
@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"  # 開発用ポート
+      - "5433:5432" # 開発用ポート
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
       - ./ddl/database-setup.sql:/docker-entrypoint-initdb.d/01-init.sql
@@ -42,7 +42,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: dev@example.com
       PGADMIN_DEFAULT_PASSWORD: dev123
     ports:
-      - "5051:80"  # 開発用ポート
+      - "5051:80" # 開発用ポート
     depends_on:
       - postgres-dev
     networks:

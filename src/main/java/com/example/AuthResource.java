@@ -1,3 +1,8 @@
+// Copyright (c) 2024 Quarkus Template Project
+//
+// Licensed under the MIT License.
+// See LICENSE file in the project root for full license information.
+
 package com.example;
 
 import com.example.dto.LoginRequest;

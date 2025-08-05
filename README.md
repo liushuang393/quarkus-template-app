@@ -20,6 +20,7 @@
 ## 🚀 クイックスタート
 
 ### 前提条件
+
 - Java 21+
 - Maven 3.8+
 
@@ -39,11 +40,11 @@ open http://localhost:8080
 
 ### 初期ユーザー
 
-| ユーザー名 | パスワード | ロール | 説明 |
-|-----------|-----------|-------|------|
-| `admin` | `password` | ADMIN | 全機能アクセス |
-| `user1` | `password` | USER | 基本機能のみ |
-| `sales1` | `password` | SALES | 営業機能 |
+| ユーザー名 | パスワード | ロール | 説明           |
+| ---------- | ---------- | ------ | -------------- |
+| `admin`    | `password` | ADMIN  | 全機能アクセス |
+| `user1`    | `password` | USER   | 基本機能のみ   |
+| `sales1`   | `password` | SALES  | 営業機能       |
 
 ## 🏗️ アーキテクチャ
 
@@ -58,26 +59,26 @@ graph TB
 
 ### 技術スタック
 
-| 層 | 技術 | バージョン |
-|---|------|----------|
-| **Backend** | Quarkus | 3.25.0 |
+| 層           | 技術                      | バージョン    |
+| ------------ | ------------------------- | ------------- |
+| **Backend**  | Quarkus                   | 3.25.0        |
 | **Frontend** | Qute + Bootstrap + jQuery | 5.3.0 + 3.7.1 |
-| **Database** | PostgreSQL / H2 | 15 / 2.x |
-| **ORM** | MyBatis | 3.5.x |
-| **Security** | SmallRye JWT | - |
-| **Build** | Maven | 3.8+ |
+| **Database** | PostgreSQL / H2           | 15 / 2.x      |
+| **ORM**      | MyBatis                   | 3.5.x         |
+| **Security** | SmallRye JWT              | -             |
+| **Build**    | Maven                     | 3.8+          |
 
 ## 🆚 Quarkus vs Spring Boot の優位性
 
 ### ⚡ パフォーマンス優位性
 
-| 項目 | Quarkus | Spring Boot |
-|------|---------|-------------|
-| **起動時間** | 0.1秒以下 | 3-10秒 |
-| **メモリ使用量** | 30-50MB | 200-500MB |
+| 項目                     | Quarkus        | Spring Boot       |
+| ------------------------ | -------------- | ----------------- |
+| **起動時間**             | 0.1秒以下      | 3-10秒            |
+| **メモリ使用量**         | 30-50MB        | 200-500MB         |
 | **ネイティブコンパイル** | ✅ GraalVM対応 | ❌ 限定的サポート |
-| **コンテナサイズ** | 50-100MB | 200-500MB |
-| **コールドスタート** | 瞬時 | 数秒 |
+| **コンテナサイズ**       | 50-100MB       | 200-500MB         |
+| **コールドスタート**     | 瞬時           | 数秒              |
 
 ### 🛡️ 開発品質保証
 
@@ -92,26 +93,26 @@ graph TB
 
 **テスト環境**: Intel i7-12700K, 32GB RAM, SSD
 
-| 測定項目 | Quarkus (JVM) | Quarkus (Native) | Spring Boot |
-|----------|---------------|------------------|-------------|
-| **起動時間** | 1.2秒 | 0.08秒 | 8.5秒 |
-| **初回リクエスト** | 50ms | 15ms | 200ms |
-| **メモリ使用量** | 85MB | 35MB | 320MB |
-| **Docker イメージサイズ** | 180MB | 65MB | 450MB |
-| **ビルド時間** | 15秒 | 2分30秒 | 25秒 |
+| 測定項目                  | Quarkus (JVM) | Quarkus (Native) | Spring Boot |
+| ------------------------- | ------------- | ---------------- | ----------- |
+| **起動時間**              | 1.2秒         | 0.08秒           | 8.5秒       |
+| **初回リクエスト**        | 50ms          | 15ms             | 200ms       |
+| **メモリ使用量**          | 85MB          | 35MB             | 320MB       |
+| **Docker イメージサイズ** | 180MB         | 65MB             | 450MB       |
+| **ビルド時間**            | 15秒          | 2分30秒          | 25秒        |
 
 **結論**: ネイティブビルドにより、起動時間とメモリ使用量で圧倒的な優位性を実現
 
 ## 📚 ドキュメント
 
-| ドキュメント | 説明 |
-|-------------|------|
-| [📖 プロジェクト構造](PROJECT_STRUCTURE.md) | ディレクトリ構成とファイル説明 |
-| [🗄️ データベース設定](DATABASE_SETUP.md) | DB環境構築手順 |
-| [🔧 開発者ガイド](docs/README.md) | 各層の実装ガイド |
-| [🌐 国際化ガイド](docs/i18n-guide.md) | 多言語対応の実装方法 |
-| [🔒 セキュリティガイド](docs/security-guide.md) | JWT認証とアクセス制御 |
-| [🧪 テストガイド](docs/testing-guide.md) | テスト実装方法 |
+| ドキュメント                                    | 説明                           |
+| ----------------------------------------------- | ------------------------------ |
+| [📖 プロジェクト構造](PROJECT_STRUCTURE.md)     | ディレクトリ構成とファイル説明 |
+| [🗄️ データベース設定](DATABASE_SETUP.md)        | DB環境構築手順                 |
+| [🔧 開発者ガイド](docs/README.md)               | 各層の実装ガイド               |
+| [🌐 国際化ガイド](docs/i18n-guide.md)           | 多言語対応の実装方法           |
+| [🔒 セキュリティガイド](docs/security-guide.md) | JWT認証とアクセス制御          |
+| [🧪 テストガイド](docs/testing-guide.md)        | テスト実装方法                 |
 
 ## 🛠️ 開発ワークフロー
 
@@ -252,14 +253,14 @@ git push origin main
 
 ## 🔗 重要なURL
 
-| サービス | URL | 説明 |
-|---------|-----|------|
-| **アプリケーション** | http://localhost:8080 | メインアプリ |
-| **ダッシュボード** | http://localhost:8080/dashboard | 管理画面 |
-| **Swagger UI** | http://localhost:8080/q/swagger-ui | API ドキュメント |
-| **Dev UI** | http://localhost:8080/q/dev | 開発者ツール |
-| **H2 Console** | http://localhost:8080/h2-console | DB管理（開発環境） |
-| **Health Check** | http://localhost:8080/q/health | ヘルスチェック |
+| サービス             | URL                                | 説明               |
+| -------------------- | ---------------------------------- | ------------------ |
+| **アプリケーション** | http://localhost:8080              | メインアプリ       |
+| **ダッシュボード**   | http://localhost:8080/dashboard    | 管理画面           |
+| **Swagger UI**       | http://localhost:8080/q/swagger-ui | API ドキュメント   |
+| **Dev UI**           | http://localhost:8080/q/dev        | 開発者ツール       |
+| **H2 Console**       | http://localhost:8080/h2-console   | DB管理（開発環境） |
+| **Health Check**     | http://localhost:8080/q/health     | ヘルスチェック     |
 
 ## 🚨 トラブルシューティング
 
@@ -272,6 +273,7 @@ git push origin main
 # 別ポートで起動
 ./mvnw quarkus:dev -Dquarkus.http.port=8081
 ```
+
 </details>
 
 <details>
@@ -279,6 +281,7 @@ git push origin main
 
 開発環境（H2）: アプリケーション再起動
 本番環境（PostgreSQL）: `application-prod.yaml`の接続設定を確認
+
 </details>
 
 <details>
@@ -288,6 +291,7 @@ git push origin main
 # 鍵ファイルの存在確認
 ls src/main/resources/META-INF/resources/*.pem
 ```
+
 </details>
 
 ## 🤝 貢献
@@ -305,17 +309,20 @@ ls src/main/resources/META-INF/resources/*.pem
 このプロジェクトは以下の素晴らしいオープンソースプロジェクトによって支えられています：
 
 ### 🚀 フレームワーク・ライブラリ
+
 - **[Quarkus](https://quarkus.io/)** - 超高速起動とクラウドネイティブJavaフレームワーク
 - **[MyBatis](https://mybatis.org/)** - 優れたSQL マッピングフレームワーク
 - **[Bootstrap](https://getbootstrap.com/)** - 世界で最も人気のあるCSSフレームワーク
 - **[jQuery](https://jquery.com/)** - 高速で軽量なJavaScriptライブラリ
 
 ### 🛠️ 開発ツール
+
 - **[Maven](https://maven.apache.org/)** - プロジェクト管理とビルドツール
 - **[H2 Database](https://www.h2database.com/)** - 高速インメモリデータベース
 - **[PostgreSQL](https://www.postgresql.org/)** - 世界で最も先進的なオープンソースデータベース
 
 ### 🔒 セキュリティ
+
 - **[SmallRye JWT](https://smallrye.io/)** - MicroProfile JWT実装
 - **[BCrypt](https://github.com/patrickfav/bcrypt)** - 安全なパスワードハッシュ化
 

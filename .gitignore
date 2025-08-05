@@ -43,3 +43,8 @@ nb-configuration.xml
 /.quarkus/cli/plugins/
 # TLS Certificates
 .certs/
+
+# Node.js (for prettier)
+node_modules/
+ddl/database-setup-h2.sql
+ddl/database-setup.sql
