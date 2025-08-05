@@ -1,4 +1,4 @@
-# Quarkus 認証・権限管理システム
+﻿# Quarkus 認証・権限管理システム
 
 [![Quarkus](https://img.shields.io/badge/Quarkus-3.25.0-blue?style=flat-square&logo=quarkus)](https://quarkus.io/)
 [![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=java)](https://openjdk.org/)
@@ -67,7 +67,7 @@ graph TB
 | **Security** | SmallRye JWT | - |
 | **Build** | Maven | 3.8+ |
 
-## � Quarkus vs Spring Boot の優位性
+## 🆚 Quarkus vs Spring Boot の優位性
 
 ### ⚡ パフォーマンス優位性
 
@@ -102,7 +102,7 @@ graph TB
 
 **結論**: ネイティブビルドにより、起動時間とメモリ使用量で圧倒的な優位性を実現
 
-## �📚 ドキュメント
+## 📚 ドキュメント
 
 | ドキュメント | 説明 |
 |-------------|------|
@@ -286,7 +286,7 @@ ls src/main/resources/META-INF/resources/*.pem
 4. ブランチにプッシュ (`git push origin feature/amazing-feature`)
 5. プルリクエストを作成
 
-## � 謝辞
+## 🙏 謝辞
 
 このプロジェクトは以下の素晴らしいオープンソースプロジェクトによって支えられています：
 
@@ -307,7 +307,7 @@ ls src/main/resources/META-INF/resources/*.pem
 
 これらのプロジェクトの開発者とコントリビューターの皆様に深く感謝いたします。
 
-## �📄 ライセンス
+## 📄 ライセンス
 
 このプロジェクトは [MIT License](LICENSE) の下で公開されています。
 
@@ -326,3 +326,5 @@ ls src/main/resources/META-INF/resources/*.pem
 [⭐ Star this repo](https://github.com/liushuang393/quarkus-template-app) • [🐛 Report Bug](https://github.com/liushuang393/quarkus-template-app/issues) • [✨ Request Feature](https://github.com/liushuang393/quarkus-template-app/issues)
 
 </div>
+
+
