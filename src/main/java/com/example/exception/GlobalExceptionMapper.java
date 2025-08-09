@@ -5,7 +5,13 @@
 
 package com.example.exception;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jboss.logging.Logger;
+
 import com.example.dto.ErrorResponse;
+
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -15,9 +21,6 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.jboss.logging.Logger;
 
 /** グローバル例外ハンドラー */
 @Provider
@@ -31,9 +34,17 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
 
   @Inject com.example.service.MessageService messageService;
 
+  @Inject com.example.service.AuditLogService auditLogService;
+
   @Override
   public Response toResponse(Exception exception) {
     String path = uriInfo != null ? uriInfo.getPath() : "";
+
+
+    // WebApplicationException（404/401/403 など既定のHTTPレスポンス）は素通しする
+    if (exception instanceof jakarta.ws.rs.WebApplicationException) {
+      return ((jakarta.ws.rs.WebApplicationException) exception).getResponse();
+    }
 
     // バリデーション例外
     if (exception instanceof ConstraintViolationException) {
@@ -70,7 +81,14 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
     ErrorResponse errorResponse =
         new ErrorResponse(exception.getErrorCode(), exception.getMessage(), path);
 
-    LOG.warn("ビジネスエラー: " + exception.getMessage());
+    LOG.warn("Business error: " + exception.getMessage());
+
+    // 审计日志记录（失败）- 从路径推断操作类型
+    String action = inferActionFromPath(path);
+    if (action != null) {
+      auditLogService.logFailure(null, "unknown", action, "User", null, exception.getMessage());
+    }
+
     return Response.status(Response.Status.BAD_REQUEST).entity(errorResponse).build();
   }
 
@@ -78,5 +96,22 @@ public class GlobalExceptionMapper implements ExceptionMapper<Exception> {
     String fieldName = violation.getPropertyPath().toString();
     return new ErrorResponse.FieldError(
         fieldName, violation.getMessage(), violation.getInvalidValue());
+  }
+
+  /**
+   * 从请求路径推断操作类型
+   */
+  private String inferActionFromPath(String path) {
+    if (path == null) return null;
+
+    if (path.contains("/auth/register")) {
+      return "USER_REGISTER";
+    } else if (path.contains("/auth/login")) {
+      return "USER_LOGIN";
+    } else if (path.contains("/user")) {
+      return "USER_OPERATION";
+    }
+
+    return null;
   }
 }

@@ -5,11 +5,21 @@
 
 package com.example;
 
+import java.util.Map;
+
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.logging.Logger;
+
 import com.example.dto.LoginRequest;
 import com.example.dto.RegisterRequest;
 import com.example.model.User;
 import com.example.service.JwtService;
 import com.example.service.UserService;
+
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -19,13 +29,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import java.util.Map;
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.jboss.logging.Logger;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,41 +62,19 @@ public class AuthResource {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = com.example.dto.ErrorResponse.class)))
-  public Response register(@jakarta.validation.Valid RegisterRequest request) {
-    LOG.infof("ユーザー登録リクエスト受信: username=%s, email=%s", request.username, request.email);
+  public Response register(@jakarta.validation.Valid RegisterRequest request, @Context HttpHeaders headers) {
+    System.out.println("=== DEBUG: register method called ===");
+    LOG.infof("User registration request received: username=%s, email=%s", request.username, request.email);
 
-    try {
-      User user = userService.register(request, headers);
+    User user = userService.register(request, headers);
 
-      // 監査ログ記録（成功）
-      auditLogService.logSuccess(
-          user.getId(), user.getUsername(), "USER_REGISTER", "User", user.getId().toString());
+    // 監査ログ記録（成功）
+    auditLogService.logSuccess(
+        user.getId(), user.getUsername(), "USER_REGISTER", "User", user.getId().toString());
 
-      String message = messageService.getMessage("auth.register.success", headers);
-      LOG.infof("ユーザー登録完了: userId=%d, username=%s", user.getId(), user.getUsername());
-      return Response.ok(Map.of("message", message, "userId", user.getId())).build();
-
-    } catch (com.example.exception.BusinessException e) {
-      // ビジネス例外（ユーザー重複など）
-      LOG.warnf("ユーザー登録ビジネスエラー: username=%s, error=%s", request.username, e.getMessage());
-
-      // 監査ログ記録（失敗）
-      auditLogService.logFailure(
-          null, request.username, "USER_REGISTER", "User", null, e.getMessage());
-
-      // GlobalExceptionMapperで処理されるため、例外を再スロー
-      throw e;
-
-    } catch (Exception e) {
-      // 予期しない例外
-      LOG.errorf(e, "ユーザー登録中に予期しないエラーが発生: username=%s", request.username);
-
-      // 監査ログ記録（失敗）
-      auditLogService.logFailure(null, request.username, "USER_REGISTER", "User", null, "システムエラー");
-
-      // 内部サーバーエラーとして処理
-      throw new RuntimeException("ユーザー登録に失敗しました", e);
-    }
+    String message = messageService.getMessage("auth.register.success", headers);
+    LOG.infof("User registration completed: userId=%d, username=%s", user.getId(), user.getUsername());
+    return Response.ok(Map.of("message", message, "userId", user.getId())).build();
   }
 
   @POST

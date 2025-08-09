@@ -82,8 +82,16 @@ $(document).ready(function() {
                 $('#login-username').val(data.username);
             },
             error: function(xhr) {
+                console.log('Registration error:', xhr);
                 const response = xhr.responseJSON;
-                showMessage(response?.message || '登録に失敗しました', 'danger');
+                let errorMessage = '登録に失敗しました';
+
+                if (response) {
+                    errorMessage = response.message || errorMessage;
+                    console.log('Error details:', response);
+                }
+
+                showMessage(errorMessage, 'danger');
             }
         });
     });
@@ -108,8 +116,16 @@ $(document).ready(function() {
                 showMenu();
             },
             error: function(xhr) {
+                console.log('Login error:', xhr);
                 const response = xhr.responseJSON;
-                showMessage(response?.message || 'ログインに失敗しました', 'danger');
+                let errorMessage = 'ログインに失敗しました';
+
+                if (response) {
+                    errorMessage = response.message || errorMessage;
+                    console.log('Error details:', response);
+                }
+
+                showMessage(errorMessage, 'danger');
             }
         });
     });

@@ -61,7 +61,12 @@ cd quarkus-template-app
 ./mvnw quarkus:dev
 
 # 3. ブラウザでアクセス
-open http://localhost:8080
+🌐 アプリケーションの確認
+アプリケーションが正常に動作しているか確認できます：
+
+メインページ: http://localhost:8082
+Swagger UI: http://localhost:8082/q/swagger-ui
+ヘルスチェック: http://localhost:8082/q/health
 ```
 
 ### 初期ユーザー
@@ -148,7 +153,7 @@ cd my-new-project
 # 2. 依存関係のダウンロードとビルド
 ./mvnw clean compile
 
-# 3. 開発モードで起動
+# 3. 開発モードで起動 mvnw.cmd quarkus:dev -Pdev -Ddebug=5005 -DskipTests=true
 ./mvnw quarkus:dev
 
 # 4. ブラウザでアクセス
@@ -206,6 +211,13 @@ graph TB
 | **ネイティブコンパイル** | ✅ GraalVM対応 | ❌ 限定的サポート |
 | **コンテナサイズ**       | 50-100MB       | 200-500MB         |
 | **コールドスタート**     | 瞬時           | 数秒              |
+
+### 🤖 Quarkusは非常にインテリジェント ：
+
+* 設定ファイルの優先順位：`application.yaml` の `port: 8082` が有効
+* ホットリロード機能：ポートを自動で解放し、再バインド
+* 再指定不要：設定ファイルで設定済みのため、コマンドラインでポートを再指定する必要なし
+
 
 ### 🛡️ 開発品質保証
 

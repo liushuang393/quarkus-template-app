@@ -16,7 +16,7 @@ echo =====================================================
 echo.
 
 REM デフォルトのターゲットパス設定
-set "DEFAULT_TARGET=D:\workspace\mypj"
+set "DEFAULT_TARGET=D:\workspace\housekeeping_cleaning"
 
 REM 引数チェック
 if "%~1"=="" (

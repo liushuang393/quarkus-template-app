@@ -82,19 +82,19 @@ CREATE INDEX IF NOT EXISTS idx_audit_logs_request_id ON audit_logs(request_id);
 -- パスワード: AdminPass123 (BCryptハッシュ化済み)
 MERGE INTO users (username, password, email, role, is_active)
 KEY(username) VALUES
-('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'admin@example.com', 'ADMIN', true);
+('admin', '$2a$10$xKMPj0.8AFMpQccsQGTVaup1iHSeEitp1jilIF.qsL3at8Ty.AwSK', 'admin@example.com', 'ADMIN', true);
 
 -- 営業ユーザー作成
 -- パスワード: SalesPass123 (BCryptハッシュ化済み)
 MERGE INTO users (username, password, email, role, is_active)
 KEY(username) VALUES
-('sales', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'sales@example.com', 'SALES', true);
+('sales', '$2a$10$DjzPtjbl5VG3n8jsYMQrQuBUTi7Ft6MtL6JvuWm1CcCRslMsdvyhC', 'sales@example.com', 'SALES', true);
 
 -- 一般ユーザー作成
 -- パスワード: UserPass123 (BCryptハッシュ化済み)
 MERGE INTO users (username, password, email, role, is_active)
 KEY(username) VALUES
-('user', '$2a$10$N9qo8uLOickgx2ZMRZoMye.Uo0qQZpVy6KI1TK.rS.8xO2T6.S.S2', 'user@example.com', 'USER', true);
+('user', '$2a$10$9tXyp6YwMHpVwbgqo5wIv.G/Gz1XDlV9MAEShtV2AR/h5vJjn8TuO', 'user@example.com', 'USER', true);
 
 -- テストユーザー作成（開発・テスト用）
 -- パスワード: Password123 (BCryptハッシュ化済み)

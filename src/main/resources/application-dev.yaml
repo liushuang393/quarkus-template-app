@@ -1,5 +1,11 @@
 # 开发环境配置
 quarkus:
+  # 字符编码设置
+  native:
+    file-encoding: UTF-8
+
+  # JVM 编码设置
+  args: "-Dfile.encoding=UTF-8 -Dconsole.encoding=UTF-8"
   datasource:
     db-kind: h2
     username: sa
@@ -18,11 +24,17 @@ quarkus:
   log:
     level: INFO
     category:
-      "com.example": DEBUG
-      "com.example.mapper": DEBUG
+      com.example:
+        level: DEBUG
+      com.example.mapper:
+        level: DEBUG
+      com.example.interceptor:
+        level: DEBUG
     console:
       enable: true
       format: "%d{HH:mm:ss} %-5p [%c{2.}] (%t) %s%e%n"
+      charset: UTF-8
+      encoding: UTF-8
 
   # CORS configuration for development
   http:

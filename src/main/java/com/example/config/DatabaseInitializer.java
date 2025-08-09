@@ -5,10 +5,6 @@
 
 package com.example.config;
 
-import io.quarkus.runtime.StartupEvent;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,9 +12,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.stream.Collectors;
+
 import javax.sql.DataSource;
+
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
+
+import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 
 /** データベース初期化クラス アプリケーション起動時にテーブル作成とデータ投入を行う */
 @ApplicationScoped
@@ -32,26 +35,26 @@ public class DatabaseInitializer {
   String profile;
 
   void onStart(@Observes StartupEvent ev) {
-    LOG.info("データベース初期化を開始します...");
+    LOG.info("Starting database initialization...");
 
     try {
       if ("dev".equals(profile) || "test".equals(profile)) {
-        LOG.infof("プロファイル '%s' でデータベース初期化を実行します", profile);
+        LOG.infof("Executing database initialization for profile '%s'", profile);
         initializeDatabase("database-setup-h2.sql");
       } else if ("prod".equals(profile)) {
-        // 本番環境では手動でのスキーマ管理を推奨
-        LOG.info("本番環境のため、データベース初期化をスキップします");
+        // Manual schema management is recommended for production
+        LOG.info("Skipping database initialization for production environment");
       } else {
-        // その他の環境（デフォルトでH2を使用）
-        LOG.infof("プロファイル '%s' でデータベース初期化を実行します", profile);
+        // Other environments (using H2 by default)
+        LOG.infof("Executing database initialization for profile '%s'", profile);
         initializeDatabase("database-setup-h2.sql");
       }
 
-      LOG.info("データベース初期化が完了しました");
+      LOG.info("Database initialization completed successfully");
 
     } catch (Exception e) {
-      LOG.error("データベース初期化に失敗しました", e);
-      throw new RuntimeException("データベース初期化エラー", e);
+      LOG.error("Database initialization failed", e);
+      throw new RuntimeException("Database initialization error", e);
     }
   }
 
@@ -68,16 +71,16 @@ public class DatabaseInitializer {
           String trimmedStmt = stmt.trim();
           if (!trimmedStmt.isEmpty() && !trimmedStmt.startsWith("--")) {
             LOG.infof(
-                "SQL実行: %s", trimmedStmt.substring(0, Math.min(100, trimmedStmt.length())) + "...");
+                "Executing SQL: %s", trimmedStmt.substring(0, Math.min(100, trimmedStmt.length())) + "...");
             try {
               statement.execute(trimmedStmt);
-              LOG.debugf("SQL実行成功: %s", trimmedStmt);
+              LOG.debugf("SQL execution successful: %s", trimmedStmt);
             } catch (SQLException e) {
-              // インデックス作成エラーなどは警告として処理
+              // Handle index creation errors as warnings
               if (trimmedStmt.toUpperCase().contains("CREATE INDEX")) {
-                LOG.warnf("インデックス作成をスキップ: %s - %s", trimmedStmt, e.getMessage());
+                LOG.warnf("Skipping index creation: %s - %s", trimmedStmt, e.getMessage());
               } else {
-                LOG.errorf("SQL実行エラー: %s - %s", trimmedStmt, e.getMessage());
+                LOG.errorf("SQL execution error: %s - %s", trimmedStmt, e.getMessage());
                 throw e;
               }
             }
@@ -85,7 +88,7 @@ public class DatabaseInitializer {
         }
       }
 
-      LOG.info("SQLスクリプト実行完了: " + scriptFile);
+      LOG.info("SQL script execution completed: " + scriptFile);
     }
   }
 
@@ -109,7 +112,7 @@ public class DatabaseInitializer {
   private String loadSqlScript(String filename) throws Exception {
     try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filename)) {
       if (inputStream == null) {
-        throw new RuntimeException("SQLスクリプトが見つかりません: " + filename);
+        throw new RuntimeException("SQL script not found: " + filename);
       }
 
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
